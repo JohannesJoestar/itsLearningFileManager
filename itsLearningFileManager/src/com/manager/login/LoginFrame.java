@@ -1,4 +1,4 @@
-package itsLearningFileManager;
+package com.manager.login;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -8,9 +8,12 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+
+import com.structures.itsLearning.Course;
 
 import java.awt.FlowLayout;
 import java.awt.TextField;
@@ -20,6 +23,7 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 
@@ -30,6 +34,7 @@ public class LoginFrame extends JFrame {
 	private WebDriver driver;
 	private JButton btnNewButton;
 	private JPasswordField txtPassword;
+	private LinkedList<Course> courses;
 
 	/**
 	 * Launch the application.
@@ -52,6 +57,23 @@ public class LoginFrame extends JFrame {
 	 */
 	public LoginFrame() {
 		
+		initialiseComponents();
+		
+		// Locate ChromeDriver and build WebDriver
+		System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") +  "/lib/chromedriver.exe");
+		this.driver = new ChromeDriver();
+
+	}
+	
+	public boolean isNullOrWhiteSpace(String text){
+		if (text.trim().isEmpty() || text.isEmpty()){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public void initialiseComponents(){
 		setTitle("Login");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 136, 185);
@@ -105,6 +127,23 @@ public class LoginFrame extends JFrame {
 				password.sendKeys(String.valueOf(txtPassword.getPassword()));
 				login.click();
 				
+				// Login validation breakpoint
+				try {
+					
+					// Check for an element that is only available after succesful login.
+					driver.findElement(By.xpath("//*[@id=\"l-header\"]/nav[3]/ul/li[2]/a/img"));
+					
+					// If no exception has occured until this point, this means login was succesful.
+					JOptionPane.showMessageDialog(null, "DEBUG: Succesful login.");
+					
+				} catch (NoSuchElementException e){
+					JOptionPane.showMessageDialog(null, "Incorrect username/password, try again.");
+					txtUsername.setText("");
+					txtPassword.setText("");
+					return;
+				} // Login succesful, from now on is course loading process
+				
+				
 				
 			}
 		});
@@ -115,18 +154,15 @@ public class LoginFrame extends JFrame {
 		txtPassword = new JPasswordField();
 		txtPassword.setBounds(10, 76, 99, 20);
 		contentPane.add(txtPassword);
-		
-		// Locate ChromeDriver and build WebDriver
-		System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") +  "/lib/chromedriver.exe");
-		this.driver = new ChromeDriver();
-
 	}
-	
-	public boolean isNullOrWhiteSpace(String text){
-		if (text.trim().isEmpty() || text.isEmpty()){
-			return true;
-		} else {
-			return false;
-		}
+
+	// Get & Set
+	// Get
+	public LinkedList<Course> getCourses() {
+		return courses;
+	}
+	// Set
+	public void setCourses(LinkedList<Course> courses) {
+		this.courses = courses;
 	}
 }
