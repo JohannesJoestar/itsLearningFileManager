@@ -43,5 +43,31 @@ public class Course {
 	public void setResourcesURL(String resourcesURL){
 		this.resourcesURL = resourcesURL;
 	}
+	
+	// toString() override
+	@Override
+	public String toString(){
+		return (this.getName() + "/" + this.getID());
+	}
+	
+	// equals() override
+	public boolean equals(Course course){
+		
+		if (this.getName() != course.getName()){
+			return false;
+		} else {
+			if (this.getID() != course.getID()){
+				return false;
+			} else {
+				if ((this.getResourcesURL() != null) && (course.getResourcesURL() != null)){
+					if (this.getResourcesURL() != course.getResourcesURL()){
+						return false;
+					}
+				}
+			}
+		}
+		
+		return true;
+	}
 
 }
