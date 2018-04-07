@@ -7,6 +7,7 @@ public class Course {
 	// Properties and references
 	private String name;
 	private int ID;
+	private String resourcesURL;
 	private Tree<?> resources;
 	
 	// Default constructor
@@ -26,6 +27,9 @@ public class Course {
 	public Tree<?> getResources(){
 		return this.resources;
 	}
+	public String getResourcesURL(){
+		return this.resourcesURL;
+	}
 	// Set
 	public void setName(String name){
 		this.name = name;
@@ -35,6 +39,9 @@ public class Course {
 	}	
 	public void setResources(Tree<?> resources){
 		this.resources = resources;
-	}	
+	}
+	public void setResourcesURL(String resourcesURL){
+		this.resourcesURL = resourcesURL;
+	}
 
 }
