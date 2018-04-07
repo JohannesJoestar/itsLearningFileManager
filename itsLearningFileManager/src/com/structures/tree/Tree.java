@@ -159,7 +159,7 @@ public class Tree<T> {
 
         traversalResult.put(node, depth);
     }
-
+    
     public String toString() {
         /*
         We're going to assume a pre-order traversal by default
