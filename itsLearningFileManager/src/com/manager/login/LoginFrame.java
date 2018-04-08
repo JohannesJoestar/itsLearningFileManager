@@ -13,6 +13,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import com.manager.loading.From;
+import com.manager.loading.Loader;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
 import com.structures.tree.Tree;
@@ -156,11 +158,12 @@ public class LoginFrame extends JFrame {
 					
 				} // Login succesful, from now on is course loading process
 				
-				// Initialise course attributes for later use
-				loadCourses();
+				Loader loader = new Loader(driver);
 				
-				// Load resources
-				loadResources();
+				courses = loader.loadCourses(From.ITSLEARNING);
+				for (Course course : courses){
+					course.setResources(loader.loadResources(course, From.ITSLEARNING));
+				}
 				
 				
 				
@@ -186,10 +189,9 @@ public class LoginFrame extends JFrame {
 	
 	public TreeNode<Element> initialiseFolder(TreeNode<Element> root){
 		
-		// Extract names and determine types from entries
+		// Navigate to root folder url
 		driver.navigate().to((root.getData().getHref()));
 		List<WebElement> entries = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[2]/a"));
-		List<WebElement> images = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[1]/img")); 
 		int size = entries.size();
 		
 		// Initialise child node attributes
@@ -197,38 +199,29 @@ public class LoginFrame extends JFrame {
 			
 			// Build WebElements for readability
 			WebElement entry = entries.get(i);
-			WebElement image = images.get(i);
 			
 			// Initialise properties
-			// Post-recursion page validation
+			// Post-recursion page validation breakpoint
 			try {
-				entry.getAttribute("title");
+				entry.getAttribute("title"); // Test
 			} catch (StaleElementReferenceException e){
 				
+				// Navigate to root folder url
 				driver.navigate().to((root.getData().getHref()));
 				entries = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[2]/a"));
-				images = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[1]/img"));
 				
 				// Build WebElements for readability
 				entry = entries.get(i);
-				image = images.get(i);
+				
 			}
 			String name = entry.getAttribute("title");
 			String path = (root.getData()).getPath() + "/" + name;
 			String href = entry.getAttribute("href");
 			String type = (href.substring(29, 30).equals("F") ? ("folder") : ("file"));
 			Image icon = null;
-			/*
-			try {
-				icon = ImageIO.read(new URL(image.getAttribute("src")));
-			} catch (Exception e){
-				JOptionPane.showMessageDialog(null, "Failed to initialise icon of " + name + ".");
-			} */
 			
 			// Define and build Element
 			Element element = new Element(name, path, type, href, icon);
-			System.out.println(element.getPath());
-			//JOptionPane.showMessageDialog(null, element.toString());
 			
 			// Define and build TreeNode
 			TreeNode<Element> node = new TreeNode<Element>(element);
@@ -244,54 +237,6 @@ public class LoginFrame extends JFrame {
 		
 		return root;
 		
-	}
-	
-	public void loadCourses(){
-		
-		// Overwrite courses
-		courses.clear();
-		
-		// Navigate to courses page
-		driver.navigate().to("https://buei.itslearning.com/main.aspx?TextURL=Course%2fAllCourses.aspx&Item=l-menu-course");
-		driver.switchTo().frame("ctl00_ContentAreaIframe");
-		
-		int courseCount = driver.findElements(By.xpath("//*[@id=\"ctl03\"]/div[6]/div/div/div[2]/div/div[3]/table/tbody/tr/td[3]/a")).size();
-		
-		// Variables
-		String[] hrefs = new String[courseCount];
-		String[] names = new String[courseCount];
-		int[] IDs = new int[courseCount];
-		
-		// Go through course elements
-		for (int i = 0; i < courseCount; i++){
-			
-			// Get WebElement
-			WebElement a = driver.findElement(By.xpath("//*[@id=\"ctl03\"]/div[6]/div/div/div[2]/div/div[3]/table/tbody/tr[" + (i + 2) + "]/td[3]/a"));
-
-			// Store variables
-			hrefs[i] = a.getAttribute("href");
-			names[i] = (a.getAttribute("innerHTML")).substring(6, ((a.getAttribute("innerHTML")).length() - 7));
-			IDs[i] = Integer.parseInt(hrefs[i].substring(48, hrefs[i].length()));
-			
-		}
-		
-		// Navigate to hrefs to obtain resources page url
-		for (int i = 0; i < hrefs.length; i++){
-			
-			// Define and build temporar Course class
-			Course course = new Course();
-			
-			// Navigate to href and find resources page url
-			driver.navigate().to(hrefs[i]);
-			String resources = driver.findElement(By.xpath("//*[@id=\"link-resources\"]")).getAttribute("href");
-			
-			
-			// Initialise course attributes
-			course.setName(names[i]);
-			course.setID(IDs[i]);
-			course.setResourcesURL(resources);
-			courses.add(course);
-		}
 	}
 
 	// Get & Set
