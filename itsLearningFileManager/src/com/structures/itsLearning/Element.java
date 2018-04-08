@@ -1,8 +1,11 @@
 package com.structures.itsLearning;
 
+import java.awt.Image;
+
 public class Element {
 	
 	// Attributes
+	private Image icon;
 	private String name;
 	private String path;
 	private String type;
@@ -52,5 +55,12 @@ public class Element {
 	}
 	public void setHref(String href) {
 		this.href = href;
+	}
+	// Icon
+	public Image getIcon() {
+		return icon;
+	}
+	public void setIcon(Image icon) {
+		this.icon = icon;
 	}
 }
