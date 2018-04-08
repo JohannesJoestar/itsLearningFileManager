@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
+import javax.swing.JList;
 
 public class LoginFrame extends JFrame {
 
@@ -78,7 +79,7 @@ public class LoginFrame extends JFrame {
 	public void initialiseComponents(){
 		setTitle("Login");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 136, 185);
+		setBounds(1100, 100, 136, 185);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -135,17 +136,19 @@ public class LoginFrame extends JFrame {
 					// Check for an element that is only available after succesful login.
 					driver.findElement(By.xpath("//*[@id=\"l-header\"]/nav[3]/ul/li[2]/a/img"));
 					
-					// If no exception has occured until this point, this means login was succesful.
-					JOptionPane.showMessageDialog(null, "DEBUG: Succesful login.");
-					
 				} catch (NoSuchElementException e){
+					
 					JOptionPane.showMessageDialog(null, "Incorrect username/password, try again.");
 					txtUsername.setText("");
 					txtPassword.setText("");
 					return;
+					
 				} // Login succesful, from now on is course loading process
 				
+				// Initialise course attributes for later use
 				loadCourses();
+				
+				// Load resources
 				
 				
 				
@@ -171,34 +174,41 @@ public class LoginFrame extends JFrame {
 		
 		int courseCount = driver.findElements(By.xpath("//*[@id=\"ctl03\"]/div[6]/div/div/div[2]/div/div[3]/table/tbody/tr/td[3]/a")).size();
 		
-		for (int i = 1; i < courseCount; i++){
-			
-			// Switch frames except the first time
-			if (i != 1){
-				driver.navigate().to("https://buei.itslearning.com/main.aspx?TextURL=Course%2fAllCourses.aspx&Item=l-menu-course");
-				driver.switchTo().frame("ctl00_ContentAreaIframe");
-			}
+		// Variables
+		String[] hrefs = new String[courseCount];
+		String[] names = new String[courseCount];
+		int[] IDs = new int[courseCount];
+		
+		// Go through course elements
+		for (int i = 0; i < courseCount; i++){
 			
 			// Get WebElement
-			WebElement a = driver.findElement(By.xpath("//*[@id=\"ctl03\"]/div[6]/div/div/div[2]/div/div[3]/table/tbody/tr[" + (i + 1) + "]/td[3]/a"));
+			WebElement a = driver.findElement(By.xpath("//*[@id=\"ctl03\"]/div[6]/div/div/div[2]/div/div[3]/table/tbody/tr[" + (i + 2) + "]/td[3]/a"));
+
+			// Store variables
+			hrefs[i] = a.getAttribute("href");
+			names[i] = (a.getAttribute("innerHTML")).substring(6, ((a.getAttribute("innerHTML")).length() - 7));
+			IDs[i] = Integer.parseInt(hrefs[i].substring(48, hrefs[i].length()));
 			
-			Course course = new Course();
-			String href = a.getAttribute("href");
-			String name = a.getAttribute("innerHTML");
-			
-			// Extract information and navigate to Resources folder
-			course.setName(name.substring(6, (name.length() - 7)));
-			course.setID(Integer.parseInt(href.substring(48, href.length())));
-			driver.navigate().to(href);
-			
-			// Get Resources URL of the course
-			course.setResourcesURL(driver.findElement(By.xpath("//*[@id=\"link-resources\"]")).getAttribute("href"));
-			courses.add(course);
-			
-			JOptionPane.showMessageDialog(null, (course.toString() + "/" + course.getResourcesURL()));
 		}
 		
-		
+		// Navigate to hrefs to obtain resources page url
+		for (int i = 0; i < hrefs.length; i++){
+			
+			// Define and build temporar Course class
+			Course course = new Course();
+			
+			// Navigate to href and find resources page url
+			driver.navigate().to(hrefs[i]);
+			String resources = driver.findElement(By.xpath("//*[@id=\"link-resources\"]")).getAttribute("href");
+			
+			
+			// Initialise course attributes
+			course.setName(names[i]);
+			course.setID(IDs[i]);
+			course.setResourcesURL(resources);
+			courses.add(course);
+		}
 	}
 
 	// Get & Set
