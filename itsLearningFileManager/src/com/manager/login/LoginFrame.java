@@ -8,19 +8,30 @@ import javax.swing.border.EmptyBorder;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import com.structures.itsLearning.Course;
+import com.structures.itsLearning.Element;
+import com.structures.tree.Tree;
+import com.structures.tree.TreeNode;
 
 import java.awt.TextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
+import java.awt.Image;
+
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.awt.event.ActionEvent;
@@ -149,6 +160,7 @@ public class LoginFrame extends JFrame {
 				loadCourses();
 				
 				// Load resources
+				loadResources();
 				
 				
 				
@@ -161,6 +173,77 @@ public class LoginFrame extends JFrame {
 		txtPassword = new JPasswordField();
 		txtPassword.setBounds(10, 76, 99, 20);
 		contentPane.add(txtPassword);
+	}
+	
+	public void loadResources(){
+		
+		// Define and build Tree
+		Tree<Element> resources = new Tree<Element>();
+		Element resourcesNode = new Element("Resources", "/resources", "folder", courses.get(0).getResourcesURL(), null);
+		TreeNode<Element> root = initialiseFolder(new TreeNode<Element>(resourcesNode));
+		resources.setRoot(root);
+	}
+	
+	public TreeNode<Element> initialiseFolder(TreeNode<Element> root){
+		
+		// Extract names and determine types from entries
+		driver.navigate().to((root.getData().getHref()));
+		List<WebElement> entries = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[2]/a"));
+		List<WebElement> images = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[1]/img")); 
+		int size = entries.size();
+		
+		// Initialise child node attributes
+		for (int i = 0; i < size; i++){
+			
+			// Build WebElements for readability
+			WebElement entry = entries.get(i);
+			WebElement image = images.get(i);
+			
+			// Initialise properties
+			// Post-recursion page validation
+			try {
+				entry.getAttribute("title");
+			} catch (StaleElementReferenceException e){
+				
+				driver.navigate().to((root.getData().getHref()));
+				entries = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[2]/a"));
+				images = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[1]/img"));
+				
+				// Build WebElements for readability
+				entry = entries.get(i);
+				image = images.get(i);
+			}
+			String name = entry.getAttribute("title");
+			String path = (root.getData()).getPath() + "/" + name;
+			String href = entry.getAttribute("href");
+			String type = (href.substring(29, 30).equals("F") ? ("folder") : ("file"));
+			Image icon = null;
+			/*
+			try {
+				icon = ImageIO.read(new URL(image.getAttribute("src")));
+			} catch (Exception e){
+				JOptionPane.showMessageDialog(null, "Failed to initialise icon of " + name + ".");
+			} */
+			
+			// Define and build Element
+			Element element = new Element(name, path, type, href, icon);
+			System.out.println(element.getPath());
+			//JOptionPane.showMessageDialog(null, element.toString());
+			
+			// Define and build TreeNode
+			TreeNode<Element> node = new TreeNode<Element>(element);
+			
+			// Recursively add child nodes
+			if (type.equals("folder")){
+				root.addChild(initialiseFolder(node));
+				System.out.println(" ");
+			} else {
+				root.addChild(node);
+			}
+		}
+		
+		return root;
+		
 	}
 	
 	public void loadCourses(){
