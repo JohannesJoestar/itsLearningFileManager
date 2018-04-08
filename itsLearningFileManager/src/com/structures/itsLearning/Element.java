@@ -17,14 +17,25 @@ public class Element {
 		this.setPath(null);
 		this.setType(null);
 		this.setHref(null);
+		this.setIcon(null);
 	}
 	
 	// Parametric Constructor
-	public Element(String name, String path, String type, String href){
+	public Element(String name, String path, String type, String href, Image icon){
 		this.setName(name);
 		this.setPath(path);
 		this.setType(type);
 		this.setHref(href);
+		this.setIcon(icon);
+	}
+	
+	// toString() override
+	@Override
+	public String toString(){
+		return "Name: " + this.getName() + "\n" +
+				"Path: " + this.getPath() + "\n" +
+				 "Type: " + this.getType() + "\n" +
+				  "Href: " + this.getHref() + "\n";
 	}
 
 	// Get & Set
