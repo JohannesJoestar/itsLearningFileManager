@@ -29,6 +29,21 @@ public class Element {
 		this.setIcon(icon);
 	}
 	
+	// equals() override
+	public boolean equals(Element element){
+		
+		boolean name = (this.getName() == element.getName());
+		boolean path = (this.getPath() == element.getPath());
+		boolean type = (this.getType() == element.getType());
+		boolean href = (this.getHref() == element.getHref());
+		
+		if (name && path && type && href){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	// toString() override
 	@Override
 	public String toString(){
