@@ -47,10 +47,7 @@ public class Element {
 	// toString() override
 	@Override
 	public String toString(){
-		return "Name: " + this.getName() + "\n" +
-				"Path: " + this.getPath() + "\n" +
-				 "Type: " + this.getType() + "\n" +
-				  "Href: " + this.getHref() + "\n";
+		return (this.getName() + "-" + this.getPath() + "-" + this.getType() + "-" + this.getHref());
 	}
 
 	// Get & Set
