@@ -59,6 +59,7 @@ public class DownloadInfoFrame extends JFrame {
 		progressBar = new JProgressBar();
 		progressBar.setBounds(20, 104, 769, 46);
 		contentPane.add(progressBar);
+		contentPane.setVisible(true);
 		
 		revalidate();
 	}
