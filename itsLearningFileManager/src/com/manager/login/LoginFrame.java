@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileSystemView;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -15,6 +16,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 import com.manager.loading.From;
 import com.manager.loading.Loader;
+import com.manager.loading.Settings;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
 import com.structures.tree.Tree;
@@ -29,7 +31,10 @@ import java.awt.Image;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -45,6 +50,8 @@ public class LoginFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private WebDriver driver;
+	private Settings settings;
+	private Loader loader;
 	private JButton btnNewButton;
 	private JPasswordField txtPassword;
 	private LinkedList<Course> courses;
@@ -156,9 +163,56 @@ public class LoginFrame extends JFrame {
 					txtPassword.setText("");
 					return;
 					
-				} // Login succesful, from now on is course loading process
+				} 
 				
-				Loader loader = new Loader(driver);
+				// Prompt user for the settings file
+				settings = new Settings();
+				
+				JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+
+				// Settings file validation loop
+				while (true){
+				
+					int result = chooser.showOpenDialog(null);
+					
+					if (result == JFileChooser.APPROVE_OPTION) {
+						File selectedFile = chooser.getSelectedFile();
+						boolean success = settings.loadSettingsFromPath(selectedFile.getAbsolutePath());
+						if (success){
+							JOptionPane.showMessageDialog(null, "Settings loaded!");
+							break;
+						} else {
+							int answer = JOptionPane.showConfirmDialog(
+						            null,
+						            "Something went wrong with the loading process, try again ? \n Answerin \"No\" will load default settings.",
+						            "Error",
+						            JOptionPane.YES_NO_OPTION);
+							if (answer == JOptionPane.YES_OPTION){
+								continue;
+							} else {
+								settings.loadDefault();
+								JOptionPane.showMessageDialog(null, "Loaded default settings.");
+								break;
+							}
+						}
+					} else if (result == JFileChooser.CANCEL_OPTION){
+						int answer = JOptionPane.showConfirmDialog(null, "Load default settings instead ?");
+						if (answer == JOptionPane.YES_OPTION){
+							settings.loadDefault();
+							JOptionPane.showMessageDialog(null, "Loaded default settings.");
+							break;
+						} else {
+							JOptionPane.showMessageDialog(null, "Please try again.");
+							continue;
+						}
+					} else if (result == JFileChooser.ERROR_OPTION){
+						JOptionPane.showMessageDialog(null, "Some kind of error occured, try again.");
+						continue;
+					}
+				}
+				
+				// Login succesful, from now on is course loading process
+				loader = new Loader(driver);
 				
 				courses = loader.loadCourses(From.ITSLEARNING);
 				for (Course course : courses){
