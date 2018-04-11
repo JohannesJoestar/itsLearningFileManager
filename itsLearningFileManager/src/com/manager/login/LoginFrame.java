@@ -14,7 +14,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import com.manager.loading.DownloadInfoFrame;
 import com.manager.loading.Downloader;
 import com.manager.loading.From;
 import com.manager.loading.Loader;

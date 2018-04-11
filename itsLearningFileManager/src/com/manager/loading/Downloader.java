@@ -58,17 +58,12 @@ public class Downloader {
 			hrefs.add(href);
 		}
 		
-		// Information frame with progress bar
-		DownloadInfoFrame infoframe = new DownloadInfoFrame(0, elements.size());
-		infoframe.setVisible(true);
-		
 		// Go through the download links
 		for (int i = 0; i < elements.size(); i++){
 			
 			Element element = elements.get(i);
 			String href = hrefs.get(i);
 			driver.navigate().to(href);
-			infoframe.update(element.getName());
 			File file = new File(this.getPath() + "/" + element.getName());
 			
 			// Check if target file already exists.
@@ -93,13 +88,10 @@ public class Downloader {
 				if (!moveFile(file.getAbsolutePath(), settings.getResourcesPath() + element.getPath())){
 					continue;
 				} else {
-					infoframe.setValue(infoframe.getProgressBar().getValue() + 1);
 					break;
 				}
 			}
 		}
-		
-		infoframe.setVisible(false);
 		
 	}
 	
