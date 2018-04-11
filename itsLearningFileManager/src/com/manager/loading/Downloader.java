@@ -3,6 +3,8 @@ package com.manager.loading;
 import java.io.File;
 import java.util.LinkedList;
 
+import javax.swing.JOptionPane;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -38,10 +40,11 @@ public class Downloader {
 				e.printStackTrace();
 			}
 			
-			
+			// Navigate to frames where download buttons (should be) present
 			driver.navigate().to(element.getHref());
 			driver.switchTo().frame("ctl00_ContentPlaceHolder_ExtensionIframe");
-			String href ;
+			
+			String href;
 			
 			// Differentiate 2 types of download buttons
 			try {
@@ -52,12 +55,11 @@ public class Downloader {
 				elements.remove(element);
 				continue;
 			}
-			
-			System.out.println(href);
 			hrefs.add(href);
 		}
 		
-		DownloadInfoFrame infoframe = new DownloadInfoFrame();
+		// Information frame with progress bar
+		DownloadInfoFrame infoframe = new DownloadInfoFrame(0, elements.size());
 		infoframe.setVisible(true);
 		
 		// Go through the download links
@@ -67,12 +69,31 @@ public class Downloader {
 			String href = hrefs.get(i);
 			driver.navigate().to(href);
 			infoframe.update(element.getName());
+			File file = new File(this.getPath() + "/" + element.getName());
+			
+			// Check if target file already exists.
+			if (new File(settings.getResourcesPath() + element.getPath()).exists()){
+				continue;
+			}
 			
 			// Move file loop
 			while (true) {
-				if (!moveFile(this.getPath() + "/" + element.getName(), settings.getResourcesPath() + element.getPath())){
+				
+				// Check if download has finished
+				while (!file.exists()) {
+				    try {
+						Thread.sleep(300);
+					} catch (InterruptedException e) {
+						JOptionPane.showMessageDialog(null, "Download process has been interrupted.");
+						continue;
+					}
+				}
+				
+				// Move the file from the default download location to where element path points to
+				if (!moveFile(file.getAbsolutePath(), settings.getResourcesPath() + element.getPath())){
 					continue;
 				} else {
+					infoframe.setValue(infoframe.getProgressBar().getValue() + 1);
 					break;
 				}
 			}
