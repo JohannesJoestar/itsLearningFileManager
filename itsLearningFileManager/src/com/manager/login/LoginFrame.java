@@ -14,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import com.manager.loading.DownloadInfoFrame;
 import com.manager.loading.Downloader;
 import com.manager.loading.From;
 import com.manager.loading.Loader;
@@ -118,8 +119,6 @@ public class LoginFrame extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				JOptionPane.showMessageDialog(null, System.getProperty("user.home"));
-				
 				// Login button clicked
 				// Validate input fields
 				// Validate username
@@ -150,7 +149,7 @@ public class LoginFrame extends JFrame {
 				// Login validation breakpoint
 				try {
 					
-					// Check for an element that is only available after succesful login.
+					// Check for an element that is only available after succesful login to determine login status.
 					driver.findElement(By.xpath("//*[@id=\"l-header\"]/nav[3]/ul/li[2]/a/img"));
 					
 				} catch (NoSuchElementException e){
@@ -217,7 +216,7 @@ public class LoginFrame extends JFrame {
 				}
 				
 				Downloader downloader = new Downloader(driver, settings);
-				downloader.download(testDownloader(courses.get(0).getResources()));
+				downloader.download(loader.getAllFilesFromTree(courses.get(0).getResources()));
 				
 			}
 		});
@@ -228,34 +227,6 @@ public class LoginFrame extends JFrame {
 		txtPassword = new JPasswordField();
 		txtPassword.setBounds(10, 76, 99, 20);
 		contentPane.add(txtPassword);
-	}
-	
-	public LinkedList<Element> testDownloader(Tree<Element> tree){
-		
-		LinkedList<Element> result = addStuff(tree.getRoot(), new LinkedList<Element>());
-
-		return result;
-		
-	}
-	
-	public LinkedList<Element> addStuff(TreeNode<Element> root, LinkedList<Element> list){
-		
-		int size = root.getChildren().size();
-		
-		// Folders should not be downloaded
-		
-		for (int i = 0; i < size; i++){
-			TreeNode<Element> child = root.getChildAt(i);
-			
-			if (child.getData().getType() == "folder"){
-				addStuff(child, list);
-			} else {
-				list.add(child.getData());
-				continue;
-			}
-		}
-		
-		return list;
 	}
 
 	// Get & Set

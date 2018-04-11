@@ -165,4 +165,31 @@ public class Loader {
 		
 	}
 	
+	// Gets all non-folder elements from a given tree
+	public LinkedList<Element> getAllFilesFromTree(Tree<Element> tree){
+		LinkedList<Element> result = buildFileList(tree.getRoot(), new LinkedList<Element>());
+
+		return result;
+		
+	}
+	
+	// Traverses a given tree and builds the list given as paramater
+	// This is auxilary to the getAllFilesFromTree() method
+	public LinkedList<Element> buildFileList(TreeNode<Element> root, LinkedList<Element> list){
+		int size = root.getChildren().size();
+		for (int i = 0; i < size; i++){
+			
+			TreeNode<Element> child = root.getChildAt(i);
+			
+			// Only "file" type Elements will beadded since we can't "download folders"
+			if (child.getData().getType() == "folder"){
+				buildFileList(child, list);
+			} else {
+				list.add(child.getData());
+				continue;
+			}
+		}
+		return list;
+	}
+	
 }
