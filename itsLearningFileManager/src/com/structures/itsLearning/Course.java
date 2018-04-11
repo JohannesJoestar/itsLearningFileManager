@@ -8,7 +8,7 @@ public class Course {
 	private String name;
 	private int ID;
 	private String resourcesURL;
-	private Tree<?> resources;
+	private Tree<Element> resources;
 	
 	// Default constructor
 	public Course(){
@@ -31,7 +31,7 @@ public class Course {
 	public int getID(){
 		return this.ID;
 	}
-	public Tree<?> getResources(){
+	public Tree<Element> getResources(){
 		return this.resources;
 	}
 	public String getResourcesURL(){
@@ -44,7 +44,7 @@ public class Course {
 	public void setID(int ID){
 		this.ID = ID;
 	}	
-	public void setResources(Tree<?> resources){
+	public void setResources(Tree<Element> resources){
 		this.resources = resources;
 	}
 	public void setResourcesURL(String resourcesURL){
