@@ -76,7 +76,6 @@ public class Settings {
 				buffer.close();
 				
 			} catch (Exception e){
-				e.printStackTrace();
 				JOptionPane.showMessageDialog(null, "Chosen file is not a Settings file for this application or is corrupted.");
 				
 				// Revert any changes
