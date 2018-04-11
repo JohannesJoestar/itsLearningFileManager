@@ -100,7 +100,7 @@ public class Loader {
 		if (side == From.ITSLEARNING){
 						
 			// Define and build root node
-			Element rootElement = new Element("Resources", "/resources", "folder", course.getResourcesURL(), null);
+			Element rootElement = new Element("Resources", "/Resources/" + course.getName(), "folder", course.getResourcesURL(), null);
 			TreeNode<Element> rootNode = traverseFolders(new TreeNode<Element>(rootElement));
 			resources.setRoot(rootNode);
 						
@@ -148,6 +148,7 @@ public class Loader {
 			
 			// Define and build Element
 			Element element = new Element(name, path, type, href, icon);
+			System.out.println(element.getPath());
 			
 			// Define and build TreeNode
 			TreeNode<Element> node = new TreeNode<Element>(element);
