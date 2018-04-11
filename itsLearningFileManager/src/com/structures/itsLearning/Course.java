@@ -15,6 +15,13 @@ public class Course {
 		this.setName("Default Course");
 		this.setID(0);
 	}
+	
+	// Parametric constructor
+	public Course(String name, int ID, String resourcesURL){
+		this.setName(name);
+		this.setID(ID);
+		this.setResourcesURL(resourcesURL);
+	}
 		
 	// Get & Set
 	// Get
@@ -47,7 +54,7 @@ public class Course {
 	// toString() override
 	@Override
 	public String toString(){
-		return (this.getName() + "/" + this.getID());
+		return (this.getName() + "-" + this.getID() + "-" + this.getResourcesURL());
 	}
 	
 	// equals() override
