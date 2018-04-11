@@ -113,6 +113,7 @@ public class Loader {
 		}
 	}
 	
+	// Auxilary method for loadResources() method
 	public TreeNode<Element> traverseFolders(TreeNode<Element> root){
 		
 		// Navigate to root folder url
@@ -140,6 +141,8 @@ public class Loader {
 				entry = entries.get(i);
 				
 			}
+			
+			// Element attributes
 			String name = entry.getAttribute("title");
 			String path = (root.getData()).getPath() + "/" + name;
 			String href = entry.getAttribute("href");
