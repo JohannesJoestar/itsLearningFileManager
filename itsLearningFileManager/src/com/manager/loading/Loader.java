@@ -55,7 +55,7 @@ public class Loader {
 
 				// Store variables
 				hrefs[i] = a.getAttribute("href");
-				names[i] = (a.getAttribute("innerHTML")).substring(6, ((a.getAttribute("innerHTML")).length() - 7));
+				names[i] = (a.getAttribute("innerHTML")).substring(6, 13);
 				IDs[i] = Integer.parseInt(hrefs[i].substring(48, hrefs[i].length()));
 				
 			}
@@ -148,7 +148,6 @@ public class Loader {
 			
 			// Define and build Element
 			Element element = new Element(name, path, type, href, icon);
-			System.out.println(element.getPath());
 			
 			// Define and build TreeNode
 			TreeNode<Element> node = new TreeNode<Element>(element);
