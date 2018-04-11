@@ -14,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import com.manager.loading.Downloader;
 import com.manager.loading.From;
 import com.manager.loading.Loader;
 import com.manager.loading.Settings;
@@ -29,21 +30,15 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.Image;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
-import javax.swing.JList;
 
 public class LoginFrame extends JFrame {
 
@@ -122,6 +117,8 @@ public class LoginFrame extends JFrame {
 		btnNewButton = new JButton("LOGIN");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				
+				JOptionPane.showMessageDialog(null, System.getProperty("user.home"));
 				
 				// Login button clicked
 				// Validate input fields
@@ -219,7 +216,8 @@ public class LoginFrame extends JFrame {
 					course.setResources(loader.loadResources(course, From.ITSLEARNING));
 				}
 				
-				
+				Downloader downloader = new Downloader(driver, settings);
+				downloader.download(testDownloader(courses.get(0).getResources()));
 				
 			}
 		});
@@ -232,65 +230,32 @@ public class LoginFrame extends JFrame {
 		contentPane.add(txtPassword);
 	}
 	
-	public void loadResources(){
+	public LinkedList<Element> testDownloader(Tree<Element> tree){
 		
-		// Define and build Tree
-		Tree<Element> resources = new Tree<Element>();
-		Element resourcesNode = new Element("Resources", "/resources", "folder", courses.get(0).getResourcesURL(), null);
-		TreeNode<Element> root = initialiseFolder(new TreeNode<Element>(resourcesNode));
-		resources.setRoot(root);
+		LinkedList<Element> result = addStuff(tree.getRoot(), new LinkedList<Element>());
+
+		return result;
+		
 	}
 	
-	public TreeNode<Element> initialiseFolder(TreeNode<Element> root){
+	public LinkedList<Element> addStuff(TreeNode<Element> root, LinkedList<Element> list){
 		
-		// Navigate to root folder url
-		driver.navigate().to((root.getData().getHref()));
-		List<WebElement> entries = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[2]/a"));
-		int size = entries.size();
+		int size = root.getChildren().size();
 		
-		// Initialise child node attributes
+		// Folders should not be downloaded
+		
 		for (int i = 0; i < size; i++){
+			TreeNode<Element> child = root.getChildAt(i);
 			
-			// Build WebElements for readability
-			WebElement entry = entries.get(i);
-			
-			// Initialise properties
-			// Post-recursion page validation breakpoint
-			try {
-				entry.getAttribute("title"); // Test
-			} catch (StaleElementReferenceException e){
-				
-				// Navigate to root folder url
-				driver.navigate().to((root.getData().getHref()));
-				entries = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[2]/a"));
-				
-				// Build WebElements for readability
-				entry = entries.get(i);
-				
-			}
-			String name = entry.getAttribute("title");
-			String path = (root.getData()).getPath() + "/" + name;
-			String href = entry.getAttribute("href");
-			String type = (href.substring(29, 30).equals("F") ? ("folder") : ("file"));
-			Image icon = null;
-			
-			// Define and build Element
-			Element element = new Element(name, path, type, href, icon);
-			
-			// Define and build TreeNode
-			TreeNode<Element> node = new TreeNode<Element>(element);
-			
-			// Recursively add child nodes
-			if (type.equals("folder")){
-				root.addChild(initialiseFolder(node));
-				System.out.println(" ");
+			if (child.getData().getType() == "folder"){
+				addStuff(child, list);
 			} else {
-				root.addChild(node);
+				list.add(child.getData());
+				continue;
 			}
 		}
 		
-		return root;
-		
+		return list;
 	}
 
 	// Get & Set
