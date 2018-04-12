@@ -61,7 +61,7 @@ public class LoginFrame extends JFrame {
 					            JOptionPane.YES_NO_OPTION,
 					            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 					        	frame.getDriver().quit();
-					            //System.exit(0);
+					            System.exit(0);
 					        }
 					    }
 					});
@@ -99,24 +99,26 @@ public class LoginFrame extends JFrame {
 	public void initialiseComponents(){
 		setTitle("Login");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(1100, 100, 136, 185);
+		setBounds(1100, 100, 330, 358);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		TextField txtUsername = new TextField();
-		txtUsername.setBounds(10, 31, 99, 22);
+		txtUsername.setName("txtUsername");
+		txtUsername.setFont(new Font("Dialog", Font.PLAIN, 31));
+		txtUsername.setBounds(10, 57, 294, 58);
 		contentPane.add(txtUsername);
 		
 		JLabel lblUsername = new JLabel("Username:");
-		lblUsername.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblUsername.setBounds(10, 11, 99, 14);
+		lblUsername.setFont(new Font("Tahoma", Font.BOLD, 40));
+		lblUsername.setBounds(10, 11, 294, 40);
 		contentPane.add(lblUsername);
 		
 		JLabel lblPassword = new JLabel("Password:");
-		lblPassword.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblPassword.setBounds(10, 59, 99, 14);
+		lblPassword.setFont(new Font("Tahoma", Font.BOLD, 40));
+		lblPassword.setBounds(10, 121, 294, 40);
 		contentPane.add(lblPassword);
 		
 		btnNewButton = new JButton("LOGIN");
@@ -227,11 +229,12 @@ public class LoginFrame extends JFrame {
 			}
 		});
 		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 16));
-		btnNewButton.setBounds(10, 107, 99, 33);
+		btnNewButton.setBounds(10, 241, 294, 67);
 		contentPane.add(btnNewButton);
 		
 		txtPassword = new JPasswordField();
-		txtPassword.setBounds(10, 76, 99, 20);
+		txtPassword.setFont(new Font("Tahoma", Font.PLAIN, 31));
+		txtPassword.setBounds(10, 172, 294, 58);
 		contentPane.add(txtPassword);
 	}
 
