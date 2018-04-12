@@ -207,7 +207,9 @@ public class LoginFrame extends JFrame {
 				}
 				
 				Downloader downloader = new Downloader(driver, settings);
-				downloader.download(loader.getAllFilesFromTree(courses.get(0).getResources()));
+				for (Course course : courses){
+					downloader.download(loader.getAllFilesFromTree(course.getResources()));
+				}
 				
 			}
 		});

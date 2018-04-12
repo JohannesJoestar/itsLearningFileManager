@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import com.structures.itsLearning.Element;
 
@@ -25,12 +26,15 @@ public class Downloader {
 		this.setSettings(settings);
 	}
 	
+	// Downloads a give list of Elements
 	public void download(LinkedList<Element> elements){
 		
 		LinkedList<String> hrefs = new LinkedList<String>();
 		
 		// Collect download links
-		for (Element element : elements){
+		for (int i = 0; i < elements.size(); i++){
+			
+			Element element = elements.get(i);
 			
 			// Layout the folder structure first
 			try {
@@ -47,14 +51,40 @@ public class Downloader {
 			String href;
 			
 			// Differentiate 2 types of download buttons
+			WebElement downloadButton;
 			try {
-				href = driver.findElement(By.xpath("//*[@id=\"ctl00_ctl00_MainFormContent_DownloadLinkForViewType\"]")).getAttribute("href");
+				downloadButton = driver.findElement(By.xpath("//*[@id=\"ctl00_ctl00_MainFormContent_DownloadLinkForViewType\"]"));
+				href = downloadButton.getAttribute("href");
 			} catch (NoSuchElementException e){
-				href = driver.findElement(By.xpath("//*[@id=\"ctl00_ctl00_MainFormContent_ResourceContent_DownloadButton_DownloadLink\"]")).getAttribute("href");
+				try {
+					downloadButton = driver.findElement(By.xpath("//*[@id=\"ctl00_ctl00_MainFormContent_ResourceContent_DownloadButton_DownloadLink\"]"));
+					href = downloadButton.getAttribute("href");
+				} catch (NoSuchElementException nsee){
+					
+					// Element does not have a download option
+					// Element is not suitable for download
+					elements.remove(element);
+					i--;
+					continue;
+				}
 			} catch (Exception e){
+				
+				// Element is not suitable for download
 				elements.remove(element);
+				i--;
 				continue;
 			}
+			
+			// Check if Element name is matching the name of the file that is actually going to be downloaded
+			// (Because that's a thing apparently)
+			if (downloadButton != null){
+				String downloadName = downloadButton.getAttribute("download");
+				if (downloadName != element.getName()){
+					element.setPath((element.getPath().substring(0, element.getPath().length() - element.getName().length())) + downloadName);
+					element.setName(downloadName);
+				}
+			}
+			
 			hrefs.add(href);
 		}
 		
@@ -76,6 +106,7 @@ public class Downloader {
 				
 				// Check if download has finished
 				while (!file.exists()) {
+					
 				    try {
 						Thread.sleep(300);
 					} catch (InterruptedException e) {
