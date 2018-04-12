@@ -38,7 +38,7 @@ public class Downloader {
 			
 			// Layout the folder structure first
 			try {
-				File folder = new File(settings.getResourcesPath() + (element.getPath().substring(0, (element.getPath().length() - element.getName().length()))));
+				File folder = new File(settings.getInstallationPath() + (element.getPath().substring(0, (element.getPath().length() - element.getName().length()))));
 				folder.mkdirs();
 			} catch (Exception e){
 				e.printStackTrace();
@@ -97,7 +97,7 @@ public class Downloader {
 			File file = new File(this.getPath() + "/" + element.getName());
 			
 			// Check if target file already exists.
-			if (new File(settings.getResourcesPath() + element.getPath()).exists()){
+			if (new File(settings.getInstallationPath() + element.getPath()).exists()){
 				continue;
 			}
 			
@@ -116,7 +116,7 @@ public class Downloader {
 				}
 				
 				// Move the file from the default download location to where element path points to
-				if (!moveFile(file.getAbsolutePath(), settings.getResourcesPath() + element.getPath())){
+				if (!moveFile(file.getAbsolutePath(), settings.getInstallationPath() + element.getPath())){
 					continue;
 				} else {
 					break;

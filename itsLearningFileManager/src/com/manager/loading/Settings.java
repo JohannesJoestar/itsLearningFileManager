@@ -24,13 +24,13 @@ public class Settings {
 	private LinkedList<Course> blockedCourses;
 	private LinkedList<Element> blockedElements;
 	private String path;
-	private String resourcesPath;
+	private String installationPath;
 	
 	// Default constructor
 	public Settings(){
 		this.setBlockedCourses(null);
 		this.setBlockedElements(null);
-		this.setResourcesPath(null);
+		this.setInstallationPath(null);
 	}
 	
 	// Load settings from given path
@@ -54,24 +54,42 @@ public class Settings {
 				
 				while ((line = buffer.readLine()) != null){
 					
-					String header = line.substring(0, 12);
-					line = line.substring(12);
-					
-					if (header.equals("[Courses##]:")){
-						String[] courses = line.split(",");
-						for (String course : courses){
-							String[] attributes = course.split("-");
-							blockedCourses.add(new Course(attributes[0], Integer.parseInt(attributes[1]), attributes[2]));
+					// Load settings if the field is not empty
+					if (line.length() == 12){
+						
+						// Installation path cannot be empty!
+						if (line.substring(0, 12).equals("[Resources]:")){
+							JOptionPane.showMessageDialog(null, "Your installation path is not set up.");
+							promptResourcesPath();
+						} else {
+							
+							// List of blocked courses or elements can be empty, move on
+							continue;
 						}
-					} else if (header.equals("[Elements#]:")){
-						String[] elements = line.split(",");
-						for (String element : elements){
-							String[] attributes = element.split("-");
-							blockedElements.add(new Element(attributes[0], attributes[1], attributes[2], attributes[3], null)); 
-						}
+						
+					// Header does have content
 					} else {
-						this.setResourcesPath(line);
+						
+						String header = line.substring(0, 12);
+						String content = line.substring(12);
+						
+						if (header.equals("[Courses##]:")){
+							String[] courses = content.split(",");
+							for (String course : courses){
+								String[] attributes = course.split("-");
+								blockedCourses.add(new Course(attributes[0], Integer.parseInt(attributes[1]), attributes[2]));
+							}
+						} else if (header.equals("[Elements#]:")){
+							String[] elements = content.split(",");
+							for (String element : elements){
+								String[] attributes = element.split("-");
+								blockedElements.add(new Element(attributes[0], attributes[1], attributes[2], attributes[3], null)); 
+							}
+						} else {
+							this.setInstallationPath(content);
+						}
 					}
+					
 				}
 				buffer.close();
 				
@@ -81,7 +99,7 @@ public class Settings {
 				// Revert any changes
 				this.getBlockedCourses().clear();
 				this.getBlockedElements().clear();
-				this.setResourcesPath(null);
+				this.setInstallationPath(null);
 				return false;
 			}
 			
@@ -99,23 +117,29 @@ public class Settings {
 		blockedCourses = new LinkedList<Course>();
 		blockedElements = new LinkedList<Element>();
 		
-		// Prompt user for path to resources folder
+		promptResourcesPath();
+		
+		
+	}
+	
+	// Prompt user for path to resources folder
+	public void promptResourcesPath(){
+		
 		JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.setAcceptAllFileFilterUsed(false);
-		
+				
 		JOptionPane.showMessageDialog(null, "Pick the directory your Resources folder to be set up.");
 		while (true){
 			if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
 				File selectedFile = chooser.getSelectedFile();
-				this.setResourcesPath(selectedFile.getAbsolutePath());
+				this.setInstallationPath(selectedFile.getAbsolutePath());
 				break;
 			} else {
 				JOptionPane.showMessageDialog(null, "You are required to provide a folder for Resources installation to proceed.");
 				continue;
 			}
 		}
-		
 		
 	}
 	
@@ -176,11 +200,11 @@ public class Settings {
 		this.blockedElements = blockedElements;
 	}
 	// resourcesPath
-	public String getResourcesPath() {
-		return resourcesPath;
+	public String getInstallationPath() {
+		return installationPath;
 	}
-	public void setResourcesPath(String resourcesPath) {
-		this.resourcesPath = resourcesPath;
+	public void setInstallationPath(String resourcesPath) {
+		this.installationPath = resourcesPath;
 	}
 	// path
 	public String getPath() {
