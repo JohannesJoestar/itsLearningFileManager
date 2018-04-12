@@ -52,6 +52,19 @@ public class LoginFrame extends JFrame {
 				try {
 					LoginFrame frame = new LoginFrame();
 					frame.setVisible(true);
+					frame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+					frame.addWindowListener(new java.awt.event.WindowAdapter() {
+					    @Override
+					    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+					        if (JOptionPane.showConfirmDialog(frame, 
+					            "Are you sure to close this window?", "Exit", 
+					            JOptionPane.YES_NO_OPTION,
+					            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+					        	frame.getDriver().quit();
+					            //System.exit(0);
+					        }
+					    }
+					});
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -223,12 +236,18 @@ public class LoginFrame extends JFrame {
 	}
 
 	// Get & Set
-	// Get
+	// Courses
 	public LinkedList<Course> getCourses() {
 		return courses;
 	}
-	// Set
 	public void setCourses(LinkedList<Course> courses) {
 		this.courses = courses;
+	}
+	// Driver
+	public WebDriver getDriver() {
+		return driver;
+	}
+	public void setDriver(WebDriver driver) {
+		this.driver = driver;
 	}
 }
