@@ -1,9 +1,12 @@
 package com.manager.loading;
 
 import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -20,10 +23,12 @@ public class Loader {
 	
 	// Attributes and references
 	private WebDriver driver;
+	private Settings settings;
 	
 	// Parametric constructor
-	public Loader(WebDriver driver){
+	public Loader(WebDriver driver, Settings settings){
 		this.driver = driver;
+		this.settings = settings;
 	}
 	
 	// Loading methods
@@ -45,7 +50,6 @@ public class Loader {
 			// Variables
 			String[] hrefs = new String[courseCount];
 			String[] names = new String[courseCount];
-			int[] IDs = new int[courseCount];
 			
 			// Go through course elements
 			for (int i = 0; i < courseCount; i++){
@@ -56,7 +60,6 @@ public class Loader {
 				// Store variables
 				hrefs[i] = a.getAttribute("href");
 				names[i] = (a.getAttribute("innerHTML")).substring(6, 13);
-				IDs[i] = Integer.parseInt(hrefs[i].substring(48, hrefs[i].length()));
 				
 			}
 			
@@ -73,7 +76,6 @@ public class Loader {
 				
 				// Initialise course attributes
 				course.setName(names[i]);
-				course.setID(IDs[i]);
 				course.setResourcesURL(resources);
 				courses.add(course);
 			}
@@ -85,7 +87,17 @@ public class Loader {
 		// Load from settings
 		else {
 			
-			return null;
+			// Navigate to resources and get coursenames
+			String resourcesPath = settings.getInstallationPath() + "/Resources" ;
+			File resourcesFolder = new File(resourcesPath);
+			String courseNames[] = resourcesFolder.list();
+			
+			// Create courses from course names found under /Resources
+			for (String courseName : courseNames){
+				courses.add(new Course(courseName, null));
+			}
+			
+			return courses;
 		}
 		
 	}
@@ -95,76 +107,138 @@ public class Loader {
 		
 		// Resulting Tree
 		Tree<Element> resources = new Tree<Element>();
+		Element rootElement = new Element("Resources", "/Resources/" + course.getName(), "folder", course.getResourcesURL(), null);
 					
 		// Load from itsLearning
 		if (side == From.ITSLEARNING){
 						
 			// Define and build root node
-			Element rootElement = new Element("Resources", "/Resources/" + course.getName(), "folder", course.getResourcesURL(), null);
-			TreeNode<Element> rootNode = traverseFolders(new TreeNode<Element>(rootElement));
+			TreeNode<Element> rootNode = traverseFolders(new TreeNode<Element>(rootElement), From.ITSLEARNING);
 			resources.setRoot(rootNode);
 						
 			// Assign resulting tree to the course
 			return resources;
 		}
 		// Load from settings
-		else {		
-			return null;
+		else {
+			
+			// Define and build root node
+			TreeNode<Element> rootNode = traverseFolders(new TreeNode<Element>(rootElement), From.SETTINGS);
+			resources.setRoot(rootNode);
+			
+			return resources;
 		}
 	}
 	
 	// Auxilary method for loadResources() method
-	public TreeNode<Element> traverseFolders(TreeNode<Element> root){
+	public TreeNode<Element> traverseFolders(TreeNode<Element> root, From side){
 		
-		// Navigate to root folder url
-		driver.navigate().to((root.getData().getHref()));
-		List<WebElement> entries = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[2]/a"));
-		int size = entries.size();
-		
-		// Initialise child node attributes
-		for (int i = 0; i < size; i++){
+		if (side == From.ITSLEARNING){
 			
-			// Build WebElements for readability
-			WebElement entry = entries.get(i);
+			// Navigate to root folder url
+			driver.navigate().to((root.getData().getHref()));
+			List<WebElement> entries = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[2]/a"));
+			int size = entries.size();
 			
-			// Initialise properties
-			// Post-recursion page validation breakpoint
-			try {
-				entry.getAttribute("title"); // Test
-			} catch (StaleElementReferenceException e){
-				
-				// Navigate to root folder url
-				driver.navigate().to((root.getData().getHref()));
-				entries = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[2]/a"));
+			// Initialise child node attributes
+			for (int i = 0; i < size; i++){
 				
 				// Build WebElements for readability
-				entry = entries.get(i);
+				WebElement entry = entries.get(i);
+				
+				// Initialise properties
+				// Post-recursion page validation breakpoint
+				try {
+					entry.getAttribute("title"); // Test
+				} catch (StaleElementReferenceException e){
+					
+					// Navigate to root folder url
+					driver.navigate().to((root.getData().getHref()));
+					entries = driver.findElements(By.xpath("//*[@id=\"ctl00_ContentPlaceHolder_ProcessFolderGrid_TB\"]/tr/td[2]/a"));
+					
+					// Build WebElements for readability
+					entry = entries.get(i);
+					
+				}
+				
+				// Element attributes
+				String name = entry.getAttribute("title");
+				String path = (root.getData()).getPath() + "/" + name;
+				String href = entry.getAttribute("href");
+				String type = (href.substring(29, 30).equals("F") ? ("folder") : ("file"));
+				Image icon = null;
+				try {
+					if (type == "file"){
+						icon = ImageIO.read(new File("./resources/file_icon.png"));
+					} else {
+						icon = ImageIO.read(new File("./resources/folder_icon.png"));
+					}
+				} catch (IOException e) {
+					System.out.println("Failed to load the icon for the element" + name);
+				}
+				
+				// DEBUG
+				System.out.println(path);
+				
+				// Define and build TreeNode
+				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href, icon));
+				
+				// Recursively add child nodes
+				if (type.equals("folder")){
+					root.addChild(traverseFolders(node, From.ITSLEARNING));
+					System.out.println(" ");
+				} else {
+					root.addChild(node);
+				}
+			}
+			
+			return root;
+			
+		} else {
+			
+			// Get subfolders
+			File folder = new File(settings.getInstallationPath()+ root.getData().getPath());
+			File[] files = folder.listFiles();
+			int size = files.length;
+			
+			// Go through the files
+			for (int i = 0; i < size; i++){
+				
+				// Attributes
+				String name = files[i].getName();
+				String path = (root.getData().getPath()) + "/" + name;
+				String type = ((files[i].isDirectory()) ? ("folder") : ("file"));
+				String href = "";
+				Image icon = null;
+				try {
+					if (type == "file"){
+						icon = ImageIO.read(new File("./resources/file_icon.png"));
+					} else {
+						icon = ImageIO.read(new File("./resources/folder_icon.png"));
+					}
+				} catch (IOException e) {
+					System.out.println("Failed to load the icon for the element" + name);
+				}
+				
+				// Define and build TreeNode
+				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href, icon));
+				
+				// DEBUG
+				System.out.println(path);
+				
+				// Recursively add child nodes
+				if (type.equals("folder")){
+					root.addChild(traverseFolders(node, From.SETTINGS));
+					System.out.println(" ");
+				} else {
+					root.addChild(node);
+				}
+				
 				
 			}
 			
-			// Element attributes
-			String name = entry.getAttribute("title");
-			String path = (root.getData()).getPath() + "/" + name;
-			String href = entry.getAttribute("href");
-			String type = (href.substring(29, 30).equals("F") ? ("folder") : ("file"));
-			Image icon = null;
-			
-			// Define and build Element
-			Element element = new Element(name, path, type, href, icon);
-			
-			// Define and build TreeNode
-			TreeNode<Element> node = new TreeNode<Element>(element);
-			
-			// Recursively add child nodes
-			if (type.equals("folder")){
-				root.addChild(traverseFolders(node));
-				System.out.println(" ");
-			} else {
-				root.addChild(node);
-			}
+			return root;
 		}
-		
-		return root;
 		
 	}
 	

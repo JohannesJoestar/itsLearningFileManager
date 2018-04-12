@@ -18,6 +18,8 @@ import com.manager.loading.From;
 import com.manager.loading.Loader;
 import com.manager.loading.Settings;
 import com.structures.itsLearning.Course;
+import com.structures.tree.TreeTraversal;
+
 import java.awt.TextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -140,7 +142,7 @@ public class LoginFrame extends JFrame {
 					txtPassword.setText("");
 					return;
 				}
-				
+						
 				// itsLearning login sequence
 				driver.navigate().to("https://buei.itslearning.com/");
 				
@@ -214,7 +216,7 @@ public class LoginFrame extends JFrame {
 				}
 				
 				// Login succesful, from now on is course loading process
-				loader = new Loader(driver);
+				loader = new Loader(driver, settings);		
 				
 				courses = loader.loadCourses(From.ITSLEARNING);
 				for (Course course : courses){

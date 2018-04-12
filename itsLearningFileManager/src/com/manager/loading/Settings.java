@@ -77,7 +77,7 @@ public class Settings {
 							String[] courses = content.split(",");
 							for (String course : courses){
 								String[] attributes = course.split("-");
-								blockedCourses.add(new Course(attributes[0], Integer.parseInt(attributes[1]), attributes[2]));
+								blockedCourses.add(new Course(attributes[0], attributes[1]));
 							}
 						} else if (header.equals("[Elements#]:")){
 							String[] elements = content.split(",");
