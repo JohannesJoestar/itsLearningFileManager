@@ -6,20 +6,18 @@ public class Course {
 		
 	// Properties and references
 	private String name;
-	private int ID;
 	private String resourcesURL;
 	private Tree<Element> resources;
 	
 	// Default constructor
 	public Course(){
 		this.setName("Default Course");
-		this.setID(0);
+		this.setResourcesURL("Default URL");
 	}
 	
 	// Parametric constructor
-	public Course(String name, int ID, String resourcesURL){
+	public Course(String name, String resourcesURL){
 		this.setName(name);
-		this.setID(ID);
 		this.setResourcesURL(resourcesURL);
 	}
 		
@@ -27,9 +25,6 @@ public class Course {
 	// Get
 	public String getName(){
 		return this.name;
-	}
-	public int getID(){
-		return this.ID;
 	}
 	public Tree<Element> getResources(){
 		return this.resources;
@@ -41,9 +36,6 @@ public class Course {
 	public void setName(String name){
 		this.name = name;
 	}
-	public void setID(int ID){
-		this.ID = ID;
-	}	
 	public void setResources(Tree<Element> resources){
 		this.resources = resources;
 	}
@@ -54,7 +46,7 @@ public class Course {
 	// toString() override
 	@Override
 	public String toString(){
-		return (this.getName() + "-" + this.getID() + "-" + this.getResourcesURL());
+		return (this.getName() + "-" + this.getResourcesURL());
 	}
 	
 	// equals() override
@@ -63,13 +55,9 @@ public class Course {
 		if (this.getName() != course.getName()){
 			return false;
 		} else {
-			if (this.getID() != course.getID()){
-				return false;
-			} else {
-				if ((this.getResourcesURL() != null) && (course.getResourcesURL() != null)){
-					if (this.getResourcesURL() != course.getResourcesURL()){
-						return false;
-					}
+			if ((this.getResourcesURL() != null) && (course.getResourcesURL() != null)){
+				if (this.getResourcesURL() != course.getResourcesURL()){
+					return false;
 				}
 			}
 		}
