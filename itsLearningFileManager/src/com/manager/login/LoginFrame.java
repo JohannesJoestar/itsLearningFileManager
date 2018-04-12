@@ -9,7 +9,6 @@ import javax.swing.filechooser.FileSystemView;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -19,24 +18,17 @@ import com.manager.loading.From;
 import com.manager.loading.Loader;
 import com.manager.loading.Settings;
 import com.structures.itsLearning.Course;
-import com.structures.itsLearning.Element;
-import com.structures.tree.Tree;
-import com.structures.tree.TreeNode;
-
 import java.awt.TextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
-import java.awt.Image;
-
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.LinkedList;
-import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 
