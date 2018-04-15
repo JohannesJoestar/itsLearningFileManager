@@ -1,4 +1,4 @@
-package com.manager.login;
+package com.manager.frames;
 
 import java.awt.EventQueue;
 
@@ -33,6 +33,13 @@ import java.io.File;
 import java.util.LinkedList;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.SoftBevelBorder;
 
 public class LoginFrame extends JFrame {
 
@@ -90,7 +97,7 @@ public class LoginFrame extends JFrame {
 
 	}
 	
-	public boolean isNullOrWhiteSpace(String text){
+	private boolean isNullOrWhiteSpace(String text){
 		if (text.trim().isEmpty() || text.isEmpty()){
 			return true;
 		} else {
@@ -109,21 +116,22 @@ public class LoginFrame extends JFrame {
 		
 		TextField txtUsername = new TextField();
 		txtUsername.setName("txtUsername");
-		txtUsername.setFont(new Font("Dialog", Font.PLAIN, 31));
+		txtUsername.setFont(new Font("Tahoma", Font.PLAIN, 31));
 		txtUsername.setBounds(10, 57, 294, 58);
 		contentPane.add(txtUsername);
 		
-		JLabel lblUsername = new JLabel("Username:");
-		lblUsername.setFont(new Font("Tahoma", Font.BOLD, 40));
+		JLabel lblUsername = new JLabel("Username");
+		lblUsername.setFont(new Font("Bahnschrift", Font.BOLD, 40));
 		lblUsername.setBounds(10, 11, 294, 40);
 		contentPane.add(lblUsername);
 		
-		JLabel lblPassword = new JLabel("Password:");
-		lblPassword.setFont(new Font("Tahoma", Font.BOLD, 40));
+		JLabel lblPassword = new JLabel("Password");
+		lblPassword.setFont(new Font("Bahnschrift", Font.BOLD, 40));
 		lblPassword.setBounds(10, 121, 294, 40);
 		contentPane.add(lblPassword);
 		
 		btnNewButton = new JButton("LOGIN");
+		btnNewButton.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -188,7 +196,7 @@ public class LoginFrame extends JFrame {
 						} else {
 							int answer = JOptionPane.showConfirmDialog(
 						            null,
-						            "Something went wrong with the loading process, try again ? \n Answerin \"No\" will load default settings.",
+						            "Something went wrong with the loading process, try again ? \n Answering \"No\" will load default settings.",
 						            "Error",
 						            JOptionPane.YES_NO_OPTION);
 							if (answer == JOptionPane.YES_OPTION){
@@ -215,26 +223,26 @@ public class LoginFrame extends JFrame {
 					}
 				}
 				
-				// Login succesful, from now on is course loading process
+				// Login succesful
+				// Load course resources
 				loader = new Loader(driver, settings);		
-				
 				courses = loader.loadCourses(From.ITSLEARNING);
 				for (Course course : courses){
 					course.setResources(loader.loadResources(course, From.ITSLEARNING));
 				}
 				
-				Downloader downloader = new Downloader(driver, settings);
-				for (Course course : courses){
-					downloader.download(loader.getAllFilesFromTree(course.getResources()));
-				}
+				// Launch the MainFrame
+				MainFrame mainFrame = new MainFrame(driver, settings, new Downloader(driver, settings), loader);
+				mainFrame.setVisible(true);
 				
 			}
 		});
-		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 16));
+		btnNewButton.setFont(new Font("Bahnschrift", Font.PLAIN, 39));
 		btnNewButton.setBounds(10, 241, 294, 67);
 		contentPane.add(btnNewButton);
 		
 		txtPassword = new JPasswordField();
+		txtPassword.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		txtPassword.setFont(new Font("Tahoma", Font.PLAIN, 31));
 		txtPassword.setBounds(10, 172, 294, 58);
 		contentPane.add(txtPassword);
