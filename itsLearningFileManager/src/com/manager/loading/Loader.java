@@ -66,18 +66,13 @@ public class Loader {
 			// Navigate to hrefs to obtain resources page url
 			for (int i = 0; i < hrefs.length; i++){
 				
-				// Define and build temporar Course class
-				Course course = new Course();
-				
 				// Navigate to href and find resources page url
 				driver.navigate().to(hrefs[i]);
 				String resources = driver.findElement(By.xpath("//*[@id=\"link-resources\"]")).getAttribute("href");
 				
 				
-				// Initialise course attributes
-				course.setName(names[i]);
-				course.setResourcesURL(resources);
-				courses.add(course);
+				// Build course and add to the list
+				courses.add(new Course(names[i], resources));
 			}
 			
 			// Return the resulting Course LinkedList

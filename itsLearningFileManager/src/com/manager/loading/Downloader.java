@@ -50,7 +50,7 @@ public class Downloader {
 			
 			String href;
 			
-			// Differentiate 2 types of download buttons
+			// Differentiate between 2 types of download buttons
 			WebElement downloadButton;
 			try {
 				downloadButton = driver.findElement(By.xpath("//*[@id=\"ctl00_ctl00_MainFormContent_DownloadLinkForViewType\"]"));
