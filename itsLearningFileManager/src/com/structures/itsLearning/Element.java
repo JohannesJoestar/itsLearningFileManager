@@ -11,15 +11,6 @@ public class Element {
 	private String type;
 	private String href;
 	
-	// Default Constructor
-	public Element(){
-		this.setName(null);
-		this.setPath(null);
-		this.setType(null);
-		this.setHref(null);
-		this.setIcon(null);
-	}
-	
 	// Parametric Constructor
 	public Element(String name, String path, String type, String href, Image icon){
 		this.setName(name);
@@ -35,9 +26,8 @@ public class Element {
 		boolean name = (this.getName() == element.getName());
 		boolean path = (this.getPath() == element.getPath());
 		boolean type = (this.getType() == element.getType());
-		boolean href = (this.getHref() == element.getHref());
 		
-		if (name && path && type && href){
+		if (name && path && type){
 			return true;
 		} else {
 			return false;

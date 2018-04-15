@@ -9,11 +9,7 @@ public class Course {
 	private String resourcesURL;
 	private Tree<Element> resources;
 	
-	// Default constructor
-	public Course(){
-		this.setName("Default Course");
-		this.setResourcesURL("Default URL");
-	}
+
 	
 	// Parametric constructor
 	public Course(String name, String resourcesURL){
@@ -46,7 +42,7 @@ public class Course {
 	// toString() override
 	@Override
 	public String toString(){
-		return (this.getName() + "-" + this.getResourcesURL());
+		return (this.getName() + " course");
 	}
 	
 	// equals() override
