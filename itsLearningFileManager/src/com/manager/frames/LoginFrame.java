@@ -167,6 +167,7 @@ public class LoginFrame extends JFrame {
 					
 					// Check for an element that is only available after succesful login to determine login status.
 					driver.findElement(By.xpath("//*[@id=\"l-header\"]/nav[3]/ul/li[2]/a/img"));
+					setVisible(false);
 					
 				} catch (NoSuchElementException e){
 					
@@ -223,17 +224,23 @@ public class LoginFrame extends JFrame {
 					}
 				}
 				
+				// Launch the MainFrame
+				loader = new Loader(driver, settings);	
+				MainFrame mainFrame = new MainFrame(driver, settings, (new Downloader(driver, settings)), loader);
+				mainFrame.setVisible(true);
+				mainFrame.setComponentStatus(false);
+				mainFrame.setStatus("Loading files from itsLearning ...");
+				
 				// Login succesful
-				// Load course resources
-				loader = new Loader(driver, settings);		
+				// Load course resources	
 				courses = loader.loadCourses(From.ITSLEARNING);
 				for (Course course : courses){
 					course.setResources(loader.loadResources(course, From.ITSLEARNING));
 				}
+				mainFrame.setComponentStatus(true);
+				mainFrame.setStatus("Files loaded, ready to use!");
 				
-				// Launch the MainFrame
-				MainFrame mainFrame = new MainFrame(driver, settings, new Downloader(driver, settings), loader);
-				mainFrame.setVisible(true);
+				
 				
 			}
 		});
