@@ -60,7 +60,7 @@ public class Settings {
 						// Installation path cannot be empty!
 						if (line.substring(0, 12).equals("[Resources]:")){
 							JOptionPane.showMessageDialog(null, "Your installation path is not set up.");
-							promptResourcesPath();
+							promptInstallationPath();
 						} else {
 							
 							// List of blocked courses or elements can be empty, move on
@@ -117,13 +117,13 @@ public class Settings {
 		blockedCourses = new LinkedList<Course>();
 		blockedElements = new LinkedList<Element>();
 		
-		promptResourcesPath();
+		promptInstallationPath();
 		
 		
 	}
 	
 	// Prompt user for path to resources folder
-	public void promptResourcesPath(){
+	public void promptInstallationPath(){
 		
 		JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
