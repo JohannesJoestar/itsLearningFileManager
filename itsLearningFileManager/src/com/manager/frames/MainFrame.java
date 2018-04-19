@@ -9,48 +9,92 @@ import org.openqa.selenium.WebDriver;
 import com.manager.loading.Downloader;
 import com.manager.loading.Loader;
 import com.manager.loading.Settings;
+import com.structures.itsLearning.Course;
+import com.structures.itsLearning.Element;
+
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 import javax.swing.JLabel;
+
+import java.awt.Component;
 import java.awt.Font;
+import java.util.LinkedList;
+
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
+import java.awt.Color;
 
 public class MainFrame extends JFrame {
 
-	// Properties and references
+	// Properties
 	private static final long serialVersionUID = 1L;
+	
+	// References
+	private LinkedList<Course> itsLearningCourses;
+	private LinkedList<Course> settingsCourses;
 	private WebDriver driver;
 	private Settings settings;
 	private Downloader downloader;
 	private Loader loader;
+	
+	// Components
 	private JPanel contentPane;
+	private JLabel lblStatus;
+	private JList<Element> listSettings;
+	private JList<Element> listItsLearning;
+	private DefaultListModel<Element> listSettingsModel;
+	private DefaultListModel<Element> listItsLearningModel;
 	private JTextField txtElementNameItsLearning;
 	private JTextField txtElementTypeItsLearning;
 	private JTextField txtElementNameSettings;
 	private JTextField txtElementTypeSettings;
-
+	
 	// Default constructor
 	public MainFrame() {
-		setTitle("itsLearning File Manager");
 		initialiseComponents();
 	}
 	
 	// Parametric constructor
 	public MainFrame(WebDriver driver, Settings settings, Downloader downloader, Loader loader){
 		
+		// ListModel settings
+		listSettingsModel = new DefaultListModel<Element>();
+		listItsLearningModel = new DefaultListModel<Element>();
+		
 		initialiseComponents();
+		
+		ElementListCellRenderer listRenderer = new ElementListCellRenderer();
+		listSettings.setCellRenderer(listRenderer);
+		listSettings.setCellRenderer(listRenderer);
+		
 		this.driver = driver;
 		this.settings = settings;
 		this.downloader = downloader;
 		this.loader = loader;
+		this.itsLearningCourses = new LinkedList<Course>();
+		this.settingsCourses = new LinkedList<Course>();
+	}
+	
+	// Component status
+	public void setComponentStatus(boolean enabled){
+		for (Component component : this.getComponents()){
+			component.setEnabled(enabled);
+		}
+	}
+	
+	// Updates the information text below the MainFrame
+	public void setStatus(String status){
+		lblStatus.setText(status);
 	}
 
 	private void initialiseComponents() {
+		setTitle("itsLearning File Manager");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 955, 514);
+		setBounds(100, 100, 955, 532);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -62,7 +106,7 @@ public class MainFrame extends JFrame {
 		contentPane.add(pnlSetting);
 		pnlSetting.setLayout(null);
 		
-		JList listSettings = new JList();
+		listSettings = new JList<Element>(listSettingsModel);
 		listSettings.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listSettings.setBounds(10, 75, 226, 364);
 		pnlSetting.add(listSettings);
@@ -136,10 +180,10 @@ public class MainFrame extends JFrame {
 		btnChangeFolder.setBounds(248, 308, 192, 31);
 		pnlSetting.add(btnChangeFolder);
 		
-		JButton btnUpOneLevel_1 = new JButton("Up One Level");
-		btnUpOneLevel_1.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
-		btnUpOneLevel_1.setBounds(10, 42, 107, 23);
-		pnlSetting.add(btnUpOneLevel_1);
+		JButton btnUpSettings = new JButton("Up One Level");
+		btnUpSettings.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
+		btnUpSettings.setBounds(10, 42, 107, 23);
+		pnlSetting.add(btnUpSettings);
 		
 		JPanel pnlItsLearning = new JPanel();
 		pnlItsLearning.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
@@ -147,15 +191,15 @@ public class MainFrame extends JFrame {
 		contentPane.add(pnlItsLearning);
 		pnlItsLearning.setLayout(null);
 		
-		JList listItsLearning = new JList();
+		listItsLearning = new JList<Element>(listItsLearningModel);
 		listItsLearning.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listItsLearning.setBounds(10, 75, 226, 364);
 		pnlItsLearning.add(listItsLearning);
 		
-		JButton btnUpitsLearning = new JButton("Up One Level");
-		btnUpitsLearning.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
-		btnUpitsLearning.setBounds(10, 42, 107, 23);
-		pnlItsLearning.add(btnUpitsLearning);
+		JButton btnUpItsLearning = new JButton("Up One Level");
+		btnUpItsLearning.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
+		btnUpItsLearning.setBounds(10, 42, 107, 23);
+		pnlItsLearning.add(btnUpItsLearning);
 		
 		JButton btnUpdate = new JButton("Update");
 		btnUpdate.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
@@ -207,5 +251,66 @@ public class MainFrame extends JFrame {
 		lblSelectedItsLearning.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblSelectedItsLearning.setBounds(279, 165, 133, 20);
 		pnlItsLearning.add(lblSelectedItsLearning);
+		
+		JLabel lblInfoStatus = new JLabel("Status: ");
+		lblInfoStatus.setForeground(Color.BLACK);
+		lblInfoStatus.setBounds(12, 466, 56, 16);
+		contentPane.add(lblInfoStatus);
+		
+		lblStatus = new JLabel("status");
+		lblStatus.setForeground(Color.GRAY);
+		lblStatus.setBounds(56, 466, 406, 16);
+		contentPane.add(lblStatus);
+	}
+
+	// Get & Set
+	// Driver
+	public WebDriver getDriver() {
+		return driver;
+	}
+	public void setDriver(WebDriver driver) {
+		this.driver = driver;
+	}
+	// Settings
+	public Settings getSettings() {
+		return settings;
+	}
+	public void setSettings(Settings settings) {
+		this.settings = settings;
+	}
+	// Downloader
+	public Downloader getDownloader() {
+		return downloader;
+	}
+	public void setDownloader(Downloader downloader) {
+		this.downloader = downloader;
+	}
+	// Loader
+	public Loader getLoader() {
+		return loader;
+	}
+	public void setLoader(Loader loader) {
+		this.loader = loader;
+	}
+	// itsLearning courses
+	public LinkedList<Course> getItsLearningCourses() {
+		return itsLearningCourses;
+	}
+	public void setItsLearningCourses(LinkedList<Course> itsLearningCourses) {
+		this.itsLearningCourses = itsLearningCourses;
+	}
+	//Settings courses
+	public LinkedList<Course> getSettingsCourses() {
+		return settingsCourses;
+	}
+	public void setSettingsCourses(LinkedList<Course> settingsCourses) {
+		this.settingsCourses = settingsCourses;
+	}
+	// ListModels
+	public ListModel<Element> getListSettingsModel() {
+		return listSettingsModel;
+	}
+	public ListModel<Element> getListItsLearningModel() {
+		return listItsLearningModel;
 	}
 }

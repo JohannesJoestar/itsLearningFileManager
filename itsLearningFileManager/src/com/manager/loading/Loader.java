@@ -195,9 +195,6 @@ public class Loader {
 				// Define and build TreeNode
 				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href));
 				
-				// DEBUG
-				System.out.println(path);
-				
 				// Recursively add child nodes
 				if (type.equals("folder")){
 					root.addChild(traverseFolders(node, From.SETTINGS));

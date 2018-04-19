@@ -1,13 +1,12 @@
 package com.manager.frames;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import java.awt.Font;
+
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JTextField;
@@ -17,32 +16,62 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 
+import org.openqa.selenium.WebDriver;
+
+import com.manager.loading.Downloader;
+import com.manager.loading.Loader;
+import com.manager.loading.Settings;
+import com.structures.itsLearning.Element;
+
 public class DownloadDialog extends JFrame {
 
+	// Properties
+	private static final long serialVersionUID = 1L;
+	
+	// References
+	private WebDriver driver;
+	private Settings settings;
+	private Downloader downloader;
+	private Loader loader;
+	
+	public static void main(String[] args) {
+		DownloadDialog download = new DownloadDialog();
+		download.setVisible(true);
+	}
+	
+	// Components
 	private JPanel contentPane;
+	private JList<Element> listChanges;
+	private DefaultListModel<Element> listChangesModel;
 	private JTextField txtElementNameDownload;
 	private JTextField txtElementTypeDownload;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					DownloadDialog frame = new DownloadDialog();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+	// Default constructor
+	public DownloadDialog() {
+		
+		listChangesModel = new DefaultListModel<Element>();
+		
+		initialiseComponents();
+		
+		listChanges.setCellRenderer(new ElementListCellRenderer());
+	}
+	
+	// Parametric constructor
+	public DownloadDialog(WebDriver driver, Settings settings, Downloader downloader, Loader loader) {
+			
+		listChangesModel = new DefaultListModel<Element>();
+			
+		initialiseComponents();
+			
+		listChanges.setCellRenderer(new ElementListCellRenderer());
+		
+		this.driver = driver;
+		this.settings = settings;
+		this.downloader = downloader;
+		this.loader = loader;
 	}
 
-	/**
-	 * Create the frame.
-	 */
-	public DownloadDialog() {
+	private void initialiseComponents() {
 		setTitle("Downloader");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 512);
@@ -67,7 +96,7 @@ public class DownloadDialog extends JFrame {
 		btnUpOneLevel.setBounds(10, 36, 196, 23);
 		pnlChanges.add(btnUpOneLevel);
 		
-		JList listChanges = new JList();
+		listChanges = new JList<Element>(listChangesModel);
 		listChanges.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listChanges.setBounds(10, 64, 196, 367);
 		pnlChanges.add(listChanges);
@@ -119,6 +148,7 @@ public class DownloadDialog extends JFrame {
 		lblSelectedElement.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblSelectedElement.setBounds(245, 92, 126, 22);
 		pnlChanges.add(lblSelectedElement);
+		
 	}
 
 }
