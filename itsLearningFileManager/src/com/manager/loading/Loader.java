@@ -102,7 +102,7 @@ public class Loader {
 		
 		// Resulting Tree
 		Tree<Element> resources = new Tree<Element>();
-		Element rootElement = new Element("Resources", "/Resources/" + course.getName(), "folder", course.getResourcesURL(), null);
+		Element rootElement = new Element(course.getName(), "/" + course.getName(), "folder", course.getResourcesURL());
 					
 		// Load from itsLearning
 		if (side == From.ITSLEARNING){
@@ -161,22 +161,9 @@ public class Loader {
 				String path = (root.getData()).getPath() + "/" + name;
 				String href = entry.getAttribute("href");
 				String type = (href.substring(29, 30).equals("F") ? ("folder") : ("file"));
-				Image icon = null;
-				try {
-					if (type == "file"){
-						icon = ImageIO.read(new File("./resources/file_icon.png"));
-					} else {
-						icon = ImageIO.read(new File("./resources/folder_icon.png"));
-					}
-				} catch (IOException e) {
-					System.out.println("Failed to load the icon for the element" + name);
-				}
-				
-				// DEBUG
-				System.out.println(path);
 				
 				// Define and build TreeNode
-				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href, icon));
+				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href));
 				
 				// Recursively add child nodes
 				if (type.equals("folder")){
@@ -204,19 +191,9 @@ public class Loader {
 				String path = (root.getData().getPath()) + "/" + name;
 				String type = ((files[i].isDirectory()) ? ("folder") : ("file"));
 				String href = "";
-				Image icon = null;
-				try {
-					if (type == "file"){
-						icon = ImageIO.read(new File("./resources/file_icon.png"));
-					} else {
-						icon = ImageIO.read(new File("./resources/folder_icon.png"));
-					}
-				} catch (IOException e) {
-					System.out.println("Failed to load the icon for the element" + name);
-				}
 				
 				// Define and build TreeNode
-				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href, icon));
+				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href));
 				
 				// DEBUG
 				System.out.println(path);

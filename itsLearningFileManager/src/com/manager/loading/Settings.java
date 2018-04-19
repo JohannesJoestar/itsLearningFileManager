@@ -83,7 +83,7 @@ public class Settings {
 							String[] elements = content.split(",");
 							for (String element : elements){
 								String[] attributes = element.split("-");
-								blockedElements.add(new Element(attributes[0], attributes[1], attributes[2], attributes[3], null)); 
+								blockedElements.add(new Element(attributes[0], attributes[1], attributes[2], attributes[3])); 
 							}
 						} else {
 							this.setInstallationPath(content);
