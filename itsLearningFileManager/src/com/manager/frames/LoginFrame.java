@@ -238,7 +238,7 @@ public class LoginFrame extends JFrame {
 			}
 		});
 		btnNewButton.setFont(new Font("Bahnschrift", Font.PLAIN, 39));
-		btnNewButton.setBounds(10, 241, 294, 67);
+		btnNewButton.setBounds(10, 238, 294, 67);
 		contentPane.add(btnNewButton);
 		
 		txtPassword = new JPasswordField();
