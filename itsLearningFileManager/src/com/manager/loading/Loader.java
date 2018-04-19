@@ -203,7 +203,6 @@ public class Loader {
 					root.addChild(node);
 				}
 				
-				
 			}
 			
 			return root;
