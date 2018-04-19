@@ -123,7 +123,7 @@ public class Loader {
 	}
 	
 	// Auxilary method for loadResources() method
-	public TreeNode<Element> traverseFolders(TreeNode<Element> root, From side){
+	private TreeNode<Element> traverseFolders(TreeNode<Element> root, From side){
 		
 		if (side == From.ITSLEARNING){
 			
@@ -217,7 +217,7 @@ public class Loader {
 	
 	// Traverses a given tree and builds the list given as paramater
 	// This is auxilary to the getAllFilesFromTree() method
-	public LinkedList<Element> buildFileList(TreeNode<Element> root, LinkedList<Element> list){
+	private LinkedList<Element> buildFileList(TreeNode<Element> root, LinkedList<Element> list){
 		int size = root.getChildren().size();
 		for (int i = 0; i < size; i++){
 			
