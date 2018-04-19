@@ -37,6 +37,10 @@ public class Element {
 	// toString() override
 	@Override
 	public String toString(){
+		return (this.getName());
+	}
+	
+	public String toStringFull(){
 		return (this.getName() + "-" + this.getPath() + "-" + this.getType() + "-" + this.getHref());
 	}
 

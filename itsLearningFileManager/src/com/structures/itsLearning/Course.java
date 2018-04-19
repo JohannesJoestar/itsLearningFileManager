@@ -42,7 +42,7 @@ public class Course {
 	// toString() override
 	@Override
 	public String toString(){
-		return (this.getName() + " course");
+		return (this.getName());
 	}
 	
 	// equals() override
