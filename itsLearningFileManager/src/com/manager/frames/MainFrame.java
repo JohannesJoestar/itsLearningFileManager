@@ -59,7 +59,7 @@ public class MainFrame extends JFrame {
 	}
 	
 	// Parametric constructor
-	public MainFrame(WebDriver driver, Settings settings, Downloader downloader, Loader loader){
+	public MainFrame(WebDriver driver, Settings settings, Downloader downloader, Loader loader, LinkedList<Course> itsLearningCourses){
 		
 		// ListModel settings
 		listSettingsModel = new DefaultListModel<Element>();
@@ -75,7 +75,7 @@ public class MainFrame extends JFrame {
 		this.settings = settings;
 		this.downloader = downloader;
 		this.loader = loader;
-		this.itsLearningCourses = new LinkedList<Course>();
+		this.itsLearningCourses = itsLearningCourses;
 		this.settingsCourses = new LinkedList<Course>();
 	}
 	

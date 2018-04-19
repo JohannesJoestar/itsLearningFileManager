@@ -226,7 +226,7 @@ public class LoginFrame extends JFrame {
 				
 				// Launch the MainFrame
 				loader = new Loader(driver, settings);	
-				MainFrame mainFrame = new MainFrame(driver, settings, (new Downloader(driver, settings)), loader);
+				MainFrame mainFrame = new MainFrame(driver, settings, (new Downloader(driver, settings)), loader, courses);
 				mainFrame.setVisible(true);
 				mainFrame.setComponentStatus(false);
 				mainFrame.setStatus("Loading files from itsLearning ...");
