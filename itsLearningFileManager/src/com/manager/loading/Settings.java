@@ -144,7 +144,7 @@ public class Settings {
 	}
 	
 	// Save settings
-	public boolean save(LinkedList<Course> blockedCourses, LinkedList<Element> blockedElements, String resourcesURL){
+	public boolean save(){
 		
 		// Settings file to be saved
 		File settings = new File(this.getPath());
@@ -170,7 +170,7 @@ public class Settings {
 				}
 			}
 			
-			String url = "[Resources]:" + resourcesURL;
+			String url = "[Resources]:" + installationPath;
 			
 			writer.write(courses + "\n" + elements + "\n" + url);
 			
