@@ -55,7 +55,17 @@ public class MainFrame extends JFrame {
 	
 	// Default constructor
 	public MainFrame() {
+		
+		// ListModel settings
+		listSettingsModel = new DefaultListModel<Element>();
+		listItsLearningModel = new DefaultListModel<Element>();
+		
 		initialiseComponents();
+		
+		ElementListCellRenderer listRenderer = new ElementListCellRenderer();
+		listSettings.setCellRenderer(listRenderer);
+		listSettings.setCellRenderer(listRenderer);
+		
 	}
 	
 	// Parametric constructor
