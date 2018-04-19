@@ -183,6 +183,12 @@ public class Settings {
 		
 		return true;
 	}
+	
+	// toString()
+	@Override
+	public String toString(){
+		return (this.blockedCourses + "\n" + this.blockedElements + "\n" + this.installationPath );
+	}
 
 	// Get & Set
 	// blockedCourses
