@@ -12,7 +12,6 @@ import org.openqa.selenium.WebDriver;
 import com.manager.loading.Downloader;
 import com.manager.loading.Loader;
 import com.manager.loading.Settings;
-import javax.swing.JToolBar;
 
 public class MainFrame extends JFrame {
 
@@ -46,9 +45,6 @@ public class MainFrame extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
-		
-		JToolBar toolBar = new JToolBar();
-		contentPane.add(toolBar, BorderLayout.CENTER);
 	}
 
 }
