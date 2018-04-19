@@ -1,6 +1,10 @@
 package com.structures.itsLearning;
 
 import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class Element {
 	
@@ -12,12 +16,20 @@ public class Element {
 	private String href;
 	
 	// Parametric Constructor
-	public Element(String name, String path, String type, String href, Image icon){
+	public Element(String name, String path, String type, String href){
 		this.setName(name);
 		this.setPath(path);
 		this.setType(type);
 		this.setHref(href);
-		this.setIcon(icon);
+		try {
+			if (type == "file"){
+				this.setIcon(ImageIO.read(new File("./resources/file_icon.png")));
+			} else {
+				this.setIcon(ImageIO.read(new File("./resources/folder_icon.png")));
+			}
+		} catch (IOException e) {
+			System.out.println("Failed to load the icon for the element" + name);
+		}
 	}
 	
 	// equals() override
