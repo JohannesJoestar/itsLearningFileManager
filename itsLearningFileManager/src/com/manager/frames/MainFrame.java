@@ -12,6 +12,7 @@ import com.manager.loading.Settings;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
@@ -21,6 +22,8 @@ import javax.swing.JLabel;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Image;
+import java.io.File;
 import java.util.LinkedList;
 
 import javax.swing.border.EtchedBorder;

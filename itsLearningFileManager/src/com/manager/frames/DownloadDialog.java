@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
 import java.awt.event.ActionEvent;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.BevelBorder;
@@ -29,15 +30,11 @@ public class DownloadDialog extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	// References
+	private LinkedList<Element> downloadElements;
 	private WebDriver driver;
 	private Settings settings;
 	private Downloader downloader;
 	private Loader loader;
-	
-	public static void main(String[] args) {
-		DownloadDialog download = new DownloadDialog();
-		download.setVisible(true);
-	}
 	
 	// Components
 	private JPanel contentPane;
@@ -45,16 +42,6 @@ public class DownloadDialog extends JFrame {
 	private DefaultListModel<Element> listChangesModel;
 	private JTextField txtElementNameDownload;
 	private JTextField txtElementTypeDownload;
-
-	// Default constructor
-	public DownloadDialog() {
-		
-		listChangesModel = new DefaultListModel<Element>();
-		
-		initialiseComponents();
-		
-		listChanges.setCellRenderer(new ElementListCellRenderer());
-	}
 	
 	// Parametric constructor
 	public DownloadDialog(WebDriver driver, Settings settings, Downloader downloader, Loader loader) {
