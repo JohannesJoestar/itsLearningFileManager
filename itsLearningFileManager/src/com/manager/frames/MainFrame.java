@@ -67,7 +67,7 @@ public class MainFrame extends JFrame {
 		initialiseComponents();
 		
 		ElementListCellRenderer listRenderer = new ElementListCellRenderer();
-		listSettings.setCellRenderer(listRenderer);
+		listItsLearning.setCellRenderer(listRenderer);
 		listSettings.setCellRenderer(listRenderer);
 		
 	}
