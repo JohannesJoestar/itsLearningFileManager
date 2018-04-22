@@ -23,6 +23,7 @@ import com.manager.loading.Downloader;
 import com.manager.loading.Loader;
 import com.manager.loading.Settings;
 import com.structures.itsLearning.Element;
+import com.structures.tree.TreeNode;
 
 public class DownloadDialog extends JFrame {
 
@@ -38,15 +39,15 @@ public class DownloadDialog extends JFrame {
 	
 	// Components
 	private JPanel contentPane;
-	private JList<Element> listChanges;
-	private DefaultListModel<Element> listChangesModel;
+	private JList<TreeNode<Element>> listChanges;
+	private DefaultListModel<TreeNode<Element>> listChangesModel;
 	private JTextField txtElementNameDownload;
 	private JTextField txtElementTypeDownload;
 	
 	// Parametric constructor
 	public DownloadDialog(WebDriver driver, Settings settings, Downloader downloader, Loader loader) {
 			
-		listChangesModel = new DefaultListModel<Element>();
+		listChangesModel = new DefaultListModel<TreeNode<Element>>();
 			
 		initialiseComponents();
 			
@@ -83,7 +84,7 @@ public class DownloadDialog extends JFrame {
 		btnUpOneLevel.setBounds(10, 36, 196, 23);
 		pnlChanges.add(btnUpOneLevel);
 		
-		listChanges = new JList<Element>(listChangesModel);
+		listChanges = new JList<TreeNode<Element>>(listChangesModel);
 		listChanges.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listChanges.setBounds(10, 64, 196, 367);
 		pnlChanges.add(listChanges);

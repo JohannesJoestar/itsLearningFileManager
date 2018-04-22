@@ -11,6 +11,7 @@ import com.manager.loading.Loader;
 import com.manager.loading.Settings;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
+import com.structures.tree.TreeNode;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
@@ -47,10 +48,10 @@ public class MainFrame extends JFrame {
 	// Components
 	private JPanel contentPane;
 	private JLabel lblStatus;
-	private JList<Element> listSettings;
-	private JList<Element> listItsLearning;
-	private DefaultListModel<Element> listSettingsModel;
-	private DefaultListModel<Element> listItsLearningModel;
+	private JList<TreeNode<Element>> listSettings;
+	private JList<TreeNode<Element>> listItsLearning;
+	private DefaultListModel<TreeNode<Element>> listSettingsModel;
+	private DefaultListModel<TreeNode<Element>> listItsLearningModel;
 	private JTextField txtElementNameItsLearning;
 	private JTextField txtElementTypeItsLearning;
 	private JTextField txtElementNameSettings;
@@ -60,8 +61,8 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		
 		// ListModel settings
-		listSettingsModel = new DefaultListModel<Element>();
-		listItsLearningModel = new DefaultListModel<Element>();
+		listSettingsModel = new DefaultListModel<TreeNode<Element>>();
+		listItsLearningModel = new DefaultListModel<TreeNode<Element>>();
 		
 		initialiseComponents();
 		
@@ -75,8 +76,8 @@ public class MainFrame extends JFrame {
 	public MainFrame(WebDriver driver, Settings settings, Downloader downloader, Loader loader, LinkedList<Course> itsLearningCourses){
 		
 		// ListModel settings
-		listSettingsModel = new DefaultListModel<Element>();
-		listItsLearningModel = new DefaultListModel<Element>();
+		listSettingsModel = new DefaultListModel<TreeNode<Element>>();
+		listItsLearningModel = new DefaultListModel<TreeNode<Element>>();
 		
 		initialiseComponents();
 		
@@ -119,7 +120,7 @@ public class MainFrame extends JFrame {
 		contentPane.add(pnlSetting);
 		pnlSetting.setLayout(null);
 		
-		listSettings = new JList<Element>(listSettingsModel);
+		listSettings = new JList<TreeNode<Element>>(listSettingsModel);
 		listSettings.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listSettings.setBounds(10, 75, 226, 364);
 		pnlSetting.add(listSettings);
@@ -204,7 +205,7 @@ public class MainFrame extends JFrame {
 		contentPane.add(pnlItsLearning);
 		pnlItsLearning.setLayout(null);
 		
-		listItsLearning = new JList<Element>(listItsLearningModel);
+		listItsLearning = new JList<TreeNode<Element>>(listItsLearningModel);
 		listItsLearning.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listItsLearning.setBounds(10, 75, 226, 364);
 		pnlItsLearning.add(listItsLearning);
@@ -320,10 +321,10 @@ public class MainFrame extends JFrame {
 		this.settingsCourses = settingsCourses;
 	}
 	// ListModels
-	public ListModel<Element> getListSettingsModel() {
+	public ListModel<TreeNode<Element>> getListSettingsModel() {
 		return listSettingsModel;
 	}
-	public ListModel<Element> getListItsLearningModel() {
+	public ListModel<TreeNode<Element>> getListItsLearningModel() {
 		return listItsLearningModel;
 	}
 }

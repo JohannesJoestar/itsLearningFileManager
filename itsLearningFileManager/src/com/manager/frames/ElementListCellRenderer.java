@@ -8,16 +8,17 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
 import com.structures.itsLearning.Element;
+import com.structures.tree.TreeNode;
 
-public class ElementListCellRenderer extends JLabel implements ListCellRenderer<Element> {
+public class ElementListCellRenderer extends JLabel implements ListCellRenderer<TreeNode<Element>> {
 	
 	private static final long serialVersionUID = 1L;
 	private JLabel label;
 	  
-	public Component getListCellRendererComponent(JList<? extends Element> list, Element element, int index, boolean isSelected, boolean cellHasFocus) {
+	public Component getListCellRendererComponent(JList<? extends TreeNode<Element>> list, TreeNode<Element> node, int index, boolean isSelected, boolean cellHasFocus) {
 		
-		setText(element.toString());
-		setIcon(new ImageIcon(element.getIcon()));
+		setText(node.getData().getName());
+		setIcon(new ImageIcon(node.getData().getIcon()));
 		
 		if (isSelected) {
 			setBackground(list.getSelectionBackground());
