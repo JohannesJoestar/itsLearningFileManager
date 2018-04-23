@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.openqa.selenium.WebDriver;
 
+import com.manager.operators.From;
 import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
@@ -31,6 +32,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MainFrame extends JFrame {
 
@@ -235,11 +238,40 @@ public class MainFrame extends JFrame {
 		pnlItsLearning.add(listItsLearning);
 
 		JButton btnUpItsLearning = new JButton("Up One Level");
+		btnUpItsLearning.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				TreeNode tn = new TreeNode();
+				tn =listItsLearningModel.getElementAt(0).getParent().getParent();
+				if(tn!=null) {
+					for (int j = 0; j < tn.getNumberOfChildren(); j++) {
+					listItsLearningModel.addElement(tn.getChildAt(j));
+				}
+				}
+				else {
+					for (int i = 0; i < itsLearningCourses.size(); i++) {
+						listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
+					}
+				}
+				}
+				
+				
+				
+				
+
+		});
 		btnUpItsLearning.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnUpItsLearning.setBounds(10, 42, 107, 23);
 		pnlItsLearning.add(btnUpItsLearning);
 
 		JButton btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				
+			
+			}
+		});
 		btnUpdate.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnUpdate.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnUpdate.setBounds(127, 42, 109, 23);
