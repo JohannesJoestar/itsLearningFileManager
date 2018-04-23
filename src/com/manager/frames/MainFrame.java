@@ -55,21 +55,6 @@ public class MainFrame extends JFrame {
 	private JTextField txtElementNameSettings;
 	private JTextField txtElementTypeSettings;
 
-	// Default constructor
-	public MainFrame() {
-
-		// ListModel settings
-		listSettingsModel = new DefaultListModel<TreeNode<Element>>();
-		listItsLearningModel = new DefaultListModel<TreeNode<Element>>();
-
-		initialiseComponents();
-
-		ElementListCellRenderer listRenderer = new ElementListCellRenderer();
-		listItsLearning.setCellRenderer(listRenderer);
-		listSettings.setCellRenderer(listRenderer);
-
-	}
-
 	// Parametric constructor
 	public MainFrame(WebDriver driver, Settings settings, Loader loader, LinkedList<Course> itsLearningCourses){
 		
@@ -79,8 +64,9 @@ public class MainFrame extends JFrame {
 		
 		initialiseComponents();
 		
+		// ElementListCellRenderer is responsible for showing icons of the added Elements
 		ElementListCellRenderer listRenderer = new ElementListCellRenderer();
-		listSettings.setCellRenderer(listRenderer);
+		listItsLearning.setCellRenderer(listRenderer);
 		listSettings.setCellRenderer(listRenderer);
 		
 		this.driver = driver;
@@ -89,6 +75,11 @@ public class MainFrame extends JFrame {
 		this.itsLearningCourses = itsLearningCourses;
 		this.settingsCourses = new LinkedList<Course>();
 		
+		for (int i = 0; i < itsLearningCourses.size(); i++) {
+			listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
+		}
+		
+		// Close Selenium WebDriver on exit
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
@@ -103,17 +94,8 @@ public class MainFrame extends JFrame {
 		    }
 		});
 		
-		for (int i = 0; i < itsLearningCourses.size(); i++) {
-			listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
-		}
+		
 		 
-	}
-
-	// Component status
-	public void setComponentStatus(boolean enabled) {
-		for (Component component : this.getComponents()) {
-			component.setEnabled(enabled);
-		}
 	}
 
 	// Updates the information text below the MainFrame
@@ -154,7 +136,7 @@ public class MainFrame extends JFrame {
 
 		JPanel pnlElementSettings = new JPanel();
 		pnlElementSettings.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		pnlElementSettings.setBounds(246, 126, 198, 84);
+		pnlElementSettings.setBounds(245, 136, 198, 74);
 		pnlSetting.add(pnlElementSettings);
 		pnlElementSettings.setLayout(null);
 
@@ -182,10 +164,11 @@ public class MainFrame extends JFrame {
 
 		JLabel lblSelectedSettings = new JLabel("Selected Element");
 		lblSelectedSettings.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblSelectedSettings.setBounds(284, 105, 131, 17);
+		lblSelectedSettings.setBounds(281, 115, 131, 17);
 		pnlSetting.add(lblSelectedSettings);
 
 		JButton btnImportChanges = new JButton("Import Changes From itsLearning");
+		btnImportChanges.setEnabled(false);
 		btnImportChanges.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnImportChanges.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		btnImportChanges.setBounds(248, 223, 192, 31);
@@ -216,24 +199,19 @@ public class MainFrame extends JFrame {
 		btnUpItsLearning.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				TreeNode tn = new TreeNode();
+				TreeNode<Element> tn = new TreeNode<Element>();
 				tn =listItsLearningModel.getElementAt(0).getParent().getParent();
 				if(tn!=null) {
 					for (int j = 0; j < tn.getNumberOfChildren(); j++) {
-					listItsLearningModel.addElement(tn.getChildAt(j));
-				}
-				}
-				else {
-					for (int i = 0; i < itsLearningCourses.size(); i++) {
-						listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
+						listItsLearningModel.addElement(tn.getChildAt(j));
 					}
 				}
+				else {
+						for (int i = 0; i < itsLearningCourses.size(); i++) {
+							listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
+						}
+					}
 				}
-				
-				
-				
-				
-
 		});
 		btnUpItsLearning.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnUpItsLearning.setBounds(10, 42, 107, 23);
@@ -308,11 +286,6 @@ public class MainFrame extends JFrame {
 		contentPane.add(lblStatus);
 	}
 	
-
-
-	
-
-
 	// Get & Set
 	// Driver
 	public WebDriver getDriver() {
