@@ -10,6 +10,8 @@ import javax.swing.ListCellRenderer;
 import com.structures.itsLearning.Element;
 import com.structures.tree.TreeNode;
 
+// This class is responsible for rendering the icons of the elements on the JList.
+
 public class ElementListCellRenderer extends JLabel implements ListCellRenderer<TreeNode<Element>> {
 	
 	private static final long serialVersionUID = 1L;

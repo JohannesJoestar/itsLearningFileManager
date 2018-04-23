@@ -223,21 +223,18 @@ public class LoginFrame extends JFrame {
 						continue;
 					}
 				}
-				
-				// Launch the MainFrame
-				loader = new Loader(driver, settings);	
-				MainFrame mainFrame = new MainFrame(driver, settings, loader, courses);
-				mainFrame.setVisible(true);
-				mainFrame.setComponentStatus(false);
-				mainFrame.setStatus("Loading files from itsLearning ...");
-				
+	
 				// Login succesful
-				// Load course resources	
+				// Load course resources
+				loader = new Loader(driver, settings);	
 				courses = loader.loadCourses(From.ITSLEARNING);
 				for (Course course : courses){
 					course.setResources(loader.loadResources(course, From.ITSLEARNING));
 				}
-				mainFrame.setComponentStatus(true);
+				
+
+				MainFrame mainFrame = new MainFrame(driver, settings, loader, courses);
+				mainFrame.setVisible(true);
 				mainFrame.setStatus("Files loaded, ready to use!");
 				
 				
