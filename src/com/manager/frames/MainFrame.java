@@ -6,12 +6,10 @@ import javax.swing.border.EmptyBorder;
 
 import org.openqa.selenium.WebDriver;
 
-import com.manager.operators.From;
 import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
-import com.structures.tree.Tree;
 import com.structures.tree.TreeNode;
 
 import javax.swing.DefaultListModel;
@@ -24,8 +22,6 @@ import javax.swing.JLabel;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 
 import javax.swing.border.EtchedBorder;
@@ -80,27 +76,6 @@ public class MainFrame extends JFrame {
 		// ListModel settings
 		listSettingsModel = new DefaultListModel<TreeNode<Element>>();
 		listItsLearningModel = new DefaultListModel<TreeNode<Element>>();
-		
-		
-		for (int i = 0; i < itsLearningCourses.size(); i++) {
-			
-			TreeNode<Element> course = itsLearningCourses.get(i).getResources().getRoot();
-			course.addMouseListener(new MouseAdapter() { 
-                public void mouseClicked(MouseEvent me) { 
-
-                   if(me.getClickCount() == 2) {
-                	   listItsLearningModel.clear();
-                	   for (int j = 0; j < course.getNumberOfChildren(); j++) {
-						 listItsLearningModel.addElement(course.getChildAt(j));
-					}
-                	  
-                   }
-                	   
-               } 
-        });        
-		}
-			
-			
 		
 		initialiseComponents();
 		
