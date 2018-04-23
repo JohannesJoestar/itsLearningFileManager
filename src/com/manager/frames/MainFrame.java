@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.openqa.selenium.WebDriver;
 
+import com.manager.operators.From;
 import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
@@ -30,6 +31,8 @@ import javax.swing.border.SoftBevelBorder;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MainFrame extends JFrame {
 
@@ -56,46 +59,75 @@ public class MainFrame extends JFrame {
 	private JTextField txtElementTypeSettings;
 
 	// Parametric constructor
-	public MainFrame(WebDriver driver, Settings settings, Loader loader, LinkedList<Course> itsLearningCourses){
-		
+	public MainFrame(WebDriver driver, Settings settings, Loader loader, LinkedList<Course> itsLearningCourses) {
+
 		// ListModel settings
 		listSettingsModel = new DefaultListModel<TreeNode<Element>>();
 		listItsLearningModel = new DefaultListModel<TreeNode<Element>>();
-		
+
 		initialiseComponents();
-		
-		// ElementListCellRenderer is responsible for showing icons of the added Elements
+
+		// ElementListCellRenderer is responsible for showing icons of the added
+		// Elements
 		ElementListCellRenderer listRenderer = new ElementListCellRenderer();
 		listItsLearning.setCellRenderer(listRenderer);
 		listSettings.setCellRenderer(listRenderer);
-		
+
 		this.driver = driver;
 		this.settings = settings;
 		this.loader = loader;
 		this.itsLearningCourses = itsLearningCourses;
 		this.settingsCourses = new LinkedList<Course>();
-		
+
+		// Load courses sent from
 		for (int i = 0; i < itsLearningCourses.size(); i++) {
 			listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
 		}
-		
+		// double click on element
+		listItsLearning.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if (arg0.getClickCount() == 2) {
+					TreeNode<Element> selected = listItsLearning.getSelectedValue();
+					int noc = listItsLearning.getSelectedValue().getNumberOfChildren();
+					listItsLearningModel.clear();
+					for (int j = 0; j < noc; j++) {
+						listItsLearningModel.addElement(selected.getChildAt(j));
+					}
+
+				}
+			}
+		});
+
+		// one click
+		listItsLearning.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if (arg0.getClickCount() == 1) {
+					TreeNode<Element> selected = listItsLearning.getSelectedValue();
+					txtElementNameItsLearning.setText(selected.toString());
+					if (selected.getNumberOfChildren() == 0)
+						txtElementTypeItsLearning.setText("file");
+					else
+						txtElementTypeItsLearning.setText("folder");
+
+				}
+			}
+		});
+
 		// Close Selenium WebDriver on exit
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
-		    @Override
-		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-		        if (JOptionPane.showConfirmDialog(null, 
-		            "Are you sure to close this window?", "Exit", 
-		            JOptionPane.YES_NO_OPTION,
-		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
-		        	driver.quit();
-		            System.exit(0);
-		        }
-		    }
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				if (JOptionPane.showConfirmDialog(null, "Are you sure to close this window?", "Exit",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+					driver.quit();
+					System.exit(0);
+				}
+			}
 		});
-		
-		
-		 
+
 	}
 
 	// Updates the information text below the MainFrame
@@ -129,6 +161,24 @@ public class MainFrame extends JFrame {
 		pnlSetting.add(lblSettings);
 
 		JButton btnLoad = new JButton("Load");
+		btnLoad.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// Load courses and their resources
+				// Using the Loader class From.SETTINGS
+				// After loading, add loaded elements to settings JList
+				settingsCourses = loader.loadCourses(From.SETTINGS);
+
+				for (Course course : settingsCourses) {
+					course.setResources(loader.loadResources(course, From.SETTINGS));
+				}
+				listSettingsModel.clear();
+				for (int i = 0; i < settingsCourses.size(); i++) {
+					listSettingsModel.addElement(settingsCourses.get(i).getResources().getRoot());
+				}
+
+			}
+		});
 		btnLoad.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnLoad.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnLoad.setBounds(127, 42, 109, 23);
@@ -168,13 +218,34 @@ public class MainFrame extends JFrame {
 		pnlSetting.add(lblSelectedSettings);
 
 		JButton btnImportChanges = new JButton("Import Changes From itsLearning");
-		btnImportChanges.setEnabled(false);
+		btnImportChanges.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				LinkedList<Course> ll = new LinkedList<Course>();
+				for (int i = 0; i < itsLearningCourses.size(); i++) {
+					if(settingsCourses.contains(itsLearningCourses.get(i))!=true && 
+							settings.getBlockedElements().contains(itsLearningCourses.get(i))!=true) {
+						ll.add(itsLearningCourses.get(i));
+					}
+				}
+				//downloadDialog Açýlacak
+			}
+		});
+		if(listItsLearningModel.isEmpty()!=true && listSettingsModel.isEmpty()!=true)
+			btnImportChanges.setEnabled(true);
+		else
+			btnImportChanges.setEnabled(false);
 		btnImportChanges.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnImportChanges.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		btnImportChanges.setBounds(248, 223, 192, 31);
 		pnlSetting.add(btnImportChanges);
 
 		JButton btnChangeFolder = new JButton("Change Installation Folder");
+		btnChangeFolder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				settings.promptInstallationPath();
+			}
+		});
 		btnChangeFolder.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnChangeFolder.setBounds(248, 267, 192, 31);
 		pnlSetting.add(btnChangeFolder);
@@ -198,31 +269,45 @@ public class MainFrame extends JFrame {
 		JButton btnUpItsLearning = new JButton("Up One Level");
 		btnUpItsLearning.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				//tn eklendi.
 				
 				TreeNode<Element> tn = new TreeNode<Element>();
-				tn =listItsLearningModel.getElementAt(0).getParent().getParent();
-				if(tn!=null) {
+				tn = listItsLearningModel.getElementAt(0).getParent().getParent();
+				if (tn != null) {
+					listItsLearningModel.clear();
 					for (int j = 0; j < tn.getNumberOfChildren(); j++) {
+
 						listItsLearningModel.addElement(tn.getChildAt(j));
 					}
-				}
-				else {
-						for (int i = 0; i < itsLearningCourses.size(); i++) {
-							listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
-						}
+				} else {
+					listItsLearningModel.clear();
+					for (int i = 0; i < itsLearningCourses.size(); i++) {
+
+						listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
 					}
 				}
+			}
 		});
 		btnUpItsLearning.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnUpItsLearning.setBounds(10, 42, 107, 23);
 		pnlItsLearning.add(btnUpItsLearning);
 
 		JButton btnUpdate = new JButton("Update");
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			
-				
-			
+		btnUpdate.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				itsLearningCourses = loader.loadCourses(From.ITSLEARNING);
+
+				for (Course course : itsLearningCourses) {
+					course.setResources(loader.loadResources(course, From.ITSLEARNING));
+				}
+
+				listItsLearningModel.clear();
+				for (int i = 0; i < itsLearningCourses.size(); i++) {
+					listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
+				}
+
 			}
 		});
 		btnUpdate.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
@@ -237,6 +322,16 @@ public class MainFrame extends JFrame {
 		pnlElementItsLearning.setLayout(null);
 
 		JButton btnBlockElement = new JButton("Block Element");
+		btnBlockElement.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				// Selected element should be added to
+				// blockedCourses property of Settings class
+				settings.getBlockedElements().add(listItsLearning.getSelectedValue().getData());
+
+			}
+
+		});
 		btnBlockElement.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnBlockElement.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnBlockElement.setEnabled(false);
@@ -285,7 +380,7 @@ public class MainFrame extends JFrame {
 		lblStatus.setBounds(56, 466, 406, 16);
 		contentPane.add(lblStatus);
 	}
-	
+
 	// Get & Set
 	// Driver
 	public WebDriver getDriver() {
