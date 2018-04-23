@@ -30,6 +30,8 @@ import javax.swing.border.SoftBevelBorder;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MainFrame extends JFrame {
 
@@ -75,6 +77,7 @@ public class MainFrame extends JFrame {
 		this.itsLearningCourses = itsLearningCourses;
 		this.settingsCourses = new LinkedList<Course>();
 		
+		// Load courses sent from 
 		for (int i = 0; i < itsLearningCourses.size(); i++) {
 			listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
 		}
@@ -129,6 +132,18 @@ public class MainFrame extends JFrame {
 		pnlSetting.add(lblSettings);
 
 		JButton btnLoad = new JButton("Load");
+		btnLoad.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// Load courses and their resources 
+				// Using the Loader class From.SETTINGS
+				
+				
+				// After loading, add loaded elements to settings JList
+				
+				
+			}
+		});
 		btnLoad.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnLoad.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnLoad.setBounds(127, 42, 109, 23);
@@ -198,7 +213,6 @@ public class MainFrame extends JFrame {
 		JButton btnUpItsLearning = new JButton("Up One Level");
 		btnUpItsLearning.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
 				TreeNode<Element> tn = new TreeNode<Element>();
 				tn =listItsLearningModel.getElementAt(0).getParent().getParent();
 				if(tn!=null) {
@@ -218,11 +232,13 @@ public class MainFrame extends JFrame {
 		pnlItsLearning.add(btnUpItsLearning);
 
 		JButton btnUpdate = new JButton("Update");
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			
+		btnUpdate.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// Reload courses and their resources properties
+				// Using the Loader class
 				
-			
+				
 			}
 		});
 		btnUpdate.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
@@ -237,6 +253,16 @@ public class MainFrame extends JFrame {
 		pnlElementItsLearning.setLayout(null);
 
 		JButton btnBlockElement = new JButton("Block Element");
+		btnBlockElement.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				// Selected element should be added to
+				// blockedCourses property of Settings class
+				
+				
+				
+			}
+		});
 		btnBlockElement.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnBlockElement.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnBlockElement.setEnabled(false);
