@@ -6,8 +6,8 @@ import javax.swing.border.EmptyBorder;
 
 import org.openqa.selenium.WebDriver;
 
-import com.manager.loading.Loader;
-import com.manager.loading.Settings;
+import com.manager.operators.Loader;
+import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
 import com.structures.tree.TreeNode;
@@ -15,6 +15,7 @@ import com.structures.tree.TreeNode;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
 import javax.swing.JLabel;
@@ -85,6 +86,20 @@ public class MainFrame extends JFrame {
 		this.loader = loader;
 		this.itsLearningCourses = itsLearningCourses;
 		this.settingsCourses = new LinkedList<Course>();
+		
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        if (JOptionPane.showConfirmDialog(null, 
+		            "Are you sure to close this window?", "Exit", 
+		            JOptionPane.YES_NO_OPTION,
+		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+		        	driver.quit();
+		            System.exit(0);
+		        }
+		    }
+		});
 	}
 	
 	// Component status
@@ -124,15 +139,15 @@ public class MainFrame extends JFrame {
 		lblSettings.setBounds(10, 13, 163, 23);
 		pnlSetting.add(lblSettings);
 		
-		JButton btnReload = new JButton("Reload");
-		btnReload.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
-		btnReload.setFont(new Font("Tahoma", Font.BOLD, 13));
-		btnReload.setBounds(127, 42, 109, 23);
-		pnlSetting.add(btnReload);
+		JButton btnLoad = new JButton("Load");
+		btnLoad.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
+		btnLoad.setFont(new Font("Tahoma", Font.BOLD, 13));
+		btnLoad.setBounds(127, 42, 109, 23);
+		pnlSetting.add(btnLoad);
 		
 		JPanel pnlElementSettings = new JPanel();
 		pnlElementSettings.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		pnlElementSettings.setBounds(246, 126, 198, 134);
+		pnlElementSettings.setBounds(246, 126, 198, 84);
 		pnlSetting.add(pnlElementSettings);
 		pnlElementSettings.setLayout(null);
 		
@@ -158,20 +173,6 @@ public class MainFrame extends JFrame {
 		lblElementTypeSettings.setBounds(10, 43, 46, 14);
 		pnlElementSettings.add(lblElementTypeSettings);
 		
-		JButton btnRemove = new JButton("Remove");
-		btnRemove.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
-		btnRemove.setEnabled(false);
-		btnRemove.setFont(new Font("Tahoma", Font.BOLD, 12));
-		btnRemove.setBounds(59, 73, 89, 23);
-		pnlElementSettings.add(btnRemove);
-		
-		JButton btnRename = new JButton("Rename");
-		btnRename.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
-		btnRename.setEnabled(false);
-		btnRename.setFont(new Font("Tahoma", Font.BOLD, 12));
-		btnRename.setBounds(59, 98, 89, 23);
-		pnlElementSettings.add(btnRename);
-		
 		JLabel lblSelectedSettings = new JLabel("Selected Element");
 		lblSelectedSettings.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblSelectedSettings.setBounds(284, 105, 131, 17);
@@ -180,12 +181,12 @@ public class MainFrame extends JFrame {
 		JButton btnImportChanges = new JButton("Import Changes From itsLearning");
 		btnImportChanges.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnImportChanges.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		btnImportChanges.setBounds(248, 273, 192, 31);
+		btnImportChanges.setBounds(248, 223, 192, 31);
 		pnlSetting.add(btnImportChanges);
 		
 		JButton btnChangeFolder = new JButton("Change Installation Folder");
 		btnChangeFolder.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
-		btnChangeFolder.setBounds(248, 308, 192, 31);
+		btnChangeFolder.setBounds(248, 267, 192, 31);
 		pnlSetting.add(btnChangeFolder);
 		
 		JButton btnUpSettings = new JButton("Up One Level");

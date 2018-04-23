@@ -13,9 +13,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import com.manager.loading.From;
-import com.manager.loading.Loader;
-import com.manager.loading.Settings;
+import com.manager.operators.From;
+import com.manager.operators.Loader;
+import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
 import com.structures.tree.TreeTraversal;
 
@@ -32,6 +32,7 @@ import java.io.File;
 import java.util.LinkedList;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
@@ -113,7 +114,7 @@ public class LoginFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		TextField txtUsername = new TextField();
+		JTextField txtUsername = new JTextField();
 		txtUsername.setName("txtUsername");
 		txtUsername.setFont(new Font("Tahoma", Font.PLAIN, 31));
 		txtUsername.setBounds(10, 57, 294, 58);

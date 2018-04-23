@@ -1,4 +1,4 @@
-package com.manager.loading;
+package com.manager.operators;
 
 // ENUM types for Resources loading
 

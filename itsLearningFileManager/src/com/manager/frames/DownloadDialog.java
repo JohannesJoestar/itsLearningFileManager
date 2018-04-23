@@ -19,8 +19,8 @@ import javax.swing.border.SoftBevelBorder;
 
 import org.openqa.selenium.WebDriver;
 
-import com.manager.loading.Loader;
-import com.manager.loading.Settings;
+import com.manager.operators.Loader;
+import com.manager.operators.Settings;
 import com.structures.itsLearning.Element;
 import com.structures.tree.TreeNode;
 

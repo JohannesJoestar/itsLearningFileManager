@@ -1,4 +1,4 @@
-package com.manager.loading;
+package com.manager.operators;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

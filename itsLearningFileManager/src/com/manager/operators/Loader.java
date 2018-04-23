@@ -1,4 +1,4 @@
-package com.manager.loading;
+package com.manager.operators;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -85,7 +85,7 @@ public class Loader {
 		else {
 			
 			// Navigate to resources and get coursenames
-			String resourcesPath = settings.getInstallationPath() + "/Resources" ;
+			String resourcesPath = settings.getInstallationPath();
 			File resourcesFolder = new File(resourcesPath);
 			String courseNames[] = resourcesFolder.list();
 			
