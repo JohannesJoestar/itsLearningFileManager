@@ -19,7 +19,6 @@ import javax.swing.border.SoftBevelBorder;
 
 import org.openqa.selenium.WebDriver;
 
-import com.manager.loading.Downloader;
 import com.manager.loading.Loader;
 import com.manager.loading.Settings;
 import com.structures.itsLearning.Element;
@@ -34,7 +33,6 @@ public class DownloadDialog extends JFrame {
 	private LinkedList<Element> downloadElements;
 	private WebDriver driver;
 	private Settings settings;
-	private Downloader downloader;
 	private Loader loader;
 	
 	// Components
@@ -45,7 +43,7 @@ public class DownloadDialog extends JFrame {
 	private JTextField txtElementTypeDownload;
 	
 	// Parametric constructor
-	public DownloadDialog(WebDriver driver, Settings settings, Downloader downloader, Loader loader) {
+	public DownloadDialog(WebDriver driver, Settings settings, Loader loader) {
 			
 		listChangesModel = new DefaultListModel<TreeNode<Element>>();
 			
@@ -55,7 +53,6 @@ public class DownloadDialog extends JFrame {
 		
 		this.driver = driver;
 		this.settings = settings;
-		this.downloader = downloader;
 		this.loader = loader;
 	}
 

@@ -6,14 +6,12 @@ import javax.swing.border.EmptyBorder;
 
 import org.openqa.selenium.WebDriver;
 
-import com.manager.loading.Downloader;
 import com.manager.loading.Loader;
 import com.manager.loading.Settings;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
 import com.structures.tree.TreeNode;
 
-import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
@@ -23,8 +21,6 @@ import javax.swing.JLabel;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Image;
-import java.io.File;
 import java.util.LinkedList;
 
 import javax.swing.border.EtchedBorder;
@@ -42,7 +38,6 @@ public class MainFrame extends JFrame {
 	private LinkedList<Course> settingsCourses;
 	private WebDriver driver;
 	private Settings settings;
-	private Downloader downloader;
 	private Loader loader;
 	
 	// Components
@@ -73,7 +68,7 @@ public class MainFrame extends JFrame {
 	}
 	
 	// Parametric constructor
-	public MainFrame(WebDriver driver, Settings settings, Downloader downloader, Loader loader, LinkedList<Course> itsLearningCourses){
+	public MainFrame(WebDriver driver, Settings settings, Loader loader, LinkedList<Course> itsLearningCourses){
 		
 		// ListModel settings
 		listSettingsModel = new DefaultListModel<TreeNode<Element>>();
@@ -87,7 +82,6 @@ public class MainFrame extends JFrame {
 		
 		this.driver = driver;
 		this.settings = settings;
-		this.downloader = downloader;
 		this.loader = loader;
 		this.itsLearningCourses = itsLearningCourses;
 		this.settingsCourses = new LinkedList<Course>();
@@ -291,13 +285,6 @@ public class MainFrame extends JFrame {
 	}
 	public void setSettings(Settings settings) {
 		this.settings = settings;
-	}
-	// Downloader
-	public Downloader getDownloader() {
-		return downloader;
-	}
-	public void setDownloader(Downloader downloader) {
-		this.downloader = downloader;
 	}
 	// Loader
 	public Loader getLoader() {

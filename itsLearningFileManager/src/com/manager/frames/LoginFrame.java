@@ -13,7 +13,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import com.manager.loading.Downloader;
 import com.manager.loading.From;
 import com.manager.loading.Loader;
 import com.manager.loading.Settings;
@@ -226,7 +225,7 @@ public class LoginFrame extends JFrame {
 				
 				// Launch the MainFrame
 				loader = new Loader(driver, settings);	
-				MainFrame mainFrame = new MainFrame(driver, settings, (new Downloader(driver, settings)), loader, courses);
+				MainFrame mainFrame = new MainFrame(driver, settings, loader, courses);
 				mainFrame.setVisible(true);
 				mainFrame.setComponentStatus(false);
 				mainFrame.setStatus("Loading files from itsLearning ...");
