@@ -80,6 +80,9 @@ public class MainFrame extends JFrame {
 		this.settingsCourses = new LinkedList<Course>();
 
 		// Load courses sent from
+
+		// Load courses sent from
+
 		for (int i = 0; i < itsLearningCourses.size(); i++) {
 			listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
 		}
@@ -164,6 +167,7 @@ public class MainFrame extends JFrame {
 		btnLoad.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+
 				// Load courses and their resources
 				// Using the Loader class From.SETTINGS
 				// After loading, add loaded elements to settings JList
@@ -176,6 +180,11 @@ public class MainFrame extends JFrame {
 				for (int i = 0; i < settingsCourses.size(); i++) {
 					listSettingsModel.addElement(settingsCourses.get(i).getResources().getRoot());
 				}
+
+				// Load courses and their resources
+				// Using the Loader class From.SETTINGS
+
+				// After loading, add loaded elements to settings JList
 
 			}
 		});
@@ -222,15 +231,15 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				LinkedList<Course> ll = new LinkedList<Course>();
 				for (int i = 0; i < itsLearningCourses.size(); i++) {
-					if(settingsCourses.contains(itsLearningCourses.get(i))!=true && 
-							settings.getBlockedElements().contains(itsLearningCourses.get(i))!=true) {
+					if (settingsCourses.contains(itsLearningCourses.get(i)) != true
+							&& settings.getBlockedElements().contains(itsLearningCourses.get(i)) != true) {
 						ll.add(itsLearningCourses.get(i));
 					}
 				}
-				//downloadDialog Açýlacak
+				// downloadDialog Açýlacak
 			}
 		});
-		if(listItsLearningModel.isEmpty()!=true && listSettingsModel.isEmpty()!=true)
+		if (listItsLearningModel.isEmpty() != true && listSettingsModel.isEmpty() != true)
 			btnImportChanges.setEnabled(true);
 		else
 			btnImportChanges.setEnabled(false);
@@ -269,8 +278,9 @@ public class MainFrame extends JFrame {
 		JButton btnUpItsLearning = new JButton("Up One Level");
 		btnUpItsLearning.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//tn eklendi.
-				
+
+				// tn eklendi.
+
 				TreeNode<Element> tn = new TreeNode<Element>();
 				tn = listItsLearningModel.getElementAt(0).getParent().getParent();
 				if (tn != null) {
@@ -310,6 +320,7 @@ public class MainFrame extends JFrame {
 
 			}
 		});
+
 		btnUpdate.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnUpdate.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnUpdate.setBounds(127, 42, 109, 23);
@@ -327,11 +338,14 @@ public class MainFrame extends JFrame {
 			public void mouseClicked(MouseEvent arg0) {
 				// Selected element should be added to
 				// blockedCourses property of Settings class
+
 				settings.getBlockedElements().add(listItsLearning.getSelectedValue().getData());
 
 			}
 
-		});
+		}
+
+		);
 		btnBlockElement.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnBlockElement.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnBlockElement.setEnabled(false);
