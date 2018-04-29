@@ -7,6 +7,7 @@ import javax.swing.border.EmptyBorder;
 import org.openqa.selenium.WebDriver;
 
 import com.manager.enums.From;
+import com.manager.eventhandlers.MouseListener;
 import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
@@ -48,6 +49,8 @@ public class MainFrame extends JFrame {
 
 	// Components
 	private JPanel contentPane;
+	private JPanel pnlElementSettings;
+	private JPanel pnlElementItsLearning;
 	private JLabel lblStatus;
 	private JList<TreeNode<Element>> listSettings;
 	private JList<TreeNode<Element>> listItsLearning;
@@ -83,34 +86,9 @@ public class MainFrame extends JFrame {
 			listItsLearningModel.addElement(itsLearningCourses.get(i).getRoot());
 		}
 		
-		// double / single click on element
-		listItsLearning.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				if (arg0.getClickCount() == 2) {
-					
-					TreeNode<Element> selected = listItsLearning.getSelectedValue();
-					int noc = listItsLearning.getSelectedValue().getNumberOfChildren();
-					listItsLearningModel.clear();
-					
-					for (int j = 0; j < noc; j++) {
-						listItsLearningModel.addElement(selected.getChildAt(j));
-					}
-					
-				} else if (arg0.getClickCount() == 1) {
-					
-					TreeNode<Element> selected = listItsLearning.getSelectedValue();
-					txtElementNameItsLearning.setText(selected.toString());
-					
-					if (selected.getNumberOfChildren() == 0)
-						txtElementTypeItsLearning.setText("file");
-					else
-						txtElementTypeItsLearning.setText("folder");
-
-				}
-
-			}
-		});
+		// MouseEvent
+		listItsLearning.addMouseListener(new MouseListener(settings, listItsLearningModel, pnlElementItsLearning));
+		listSettings.addMouseListener(new MouseListener(settings, listSettingsModel, pnlElementSettings));
 
 		// Close Selenium WebDriver on exit
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -184,7 +162,7 @@ public class MainFrame extends JFrame {
 		btnLoad.setBounds(127, 42, 109, 23);
 		pnlSetting.add(btnLoad);
 
-		JPanel pnlElementSettings = new JPanel();
+		pnlElementSettings = new JPanel();
 		pnlElementSettings.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		pnlElementSettings.setBounds(245, 136, 198, 74);
 		pnlSetting.add(pnlElementSettings);
@@ -316,7 +294,7 @@ public class MainFrame extends JFrame {
 		btnUpdate.setBounds(127, 42, 109, 23);
 		pnlItsLearning.add(btnUpdate);
 
-		JPanel pnlElementItsLearning = new JPanel();
+		pnlElementItsLearning = new JPanel();
 		pnlElementItsLearning.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		pnlElementItsLearning.setBounds(247, 187, 196, 100);
 		pnlItsLearning.add(pnlElementItsLearning);
