@@ -86,7 +86,7 @@ public class MainFrame extends JFrame {
 		for (int i = 0; i < itsLearningCourses.size(); i++) {
 			listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
 		}
-		// double click on element
+		// double / one click on element
 		listItsLearning.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -94,29 +94,24 @@ public class MainFrame extends JFrame {
 					TreeNode<Element> selected = listItsLearning.getSelectedValue();
 					int noc = listItsLearning.getSelectedValue().getNumberOfChildren();
 					listItsLearningModel.clear();
-					for (int j = 0; j < noc; j++) {
+					for (int j = 0; j < noc; j++) 
 						listItsLearningModel.addElement(selected.getChildAt(j));
+					}
+					else if (arg0.getClickCount() == 1) {
+						TreeNode<Element> selected = listItsLearning.getSelectedValue();
+						txtElementNameItsLearning.setText(selected.toString());
+						if (selected.getNumberOfChildren() == 0)
+							txtElementTypeItsLearning.setText("file");
+						else
+							txtElementTypeItsLearning.setText("folder");
+
 					}
 
 				}
 			}
-		});
+		);
 
-		// one click
-		listItsLearning.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				if (arg0.getClickCount() == 1) {
-					TreeNode<Element> selected = listItsLearning.getSelectedValue();
-					txtElementNameItsLearning.setText(selected.toString());
-					if (selected.getNumberOfChildren() == 0)
-						txtElementTypeItsLearning.setText("file");
-					else
-						txtElementTypeItsLearning.setText("folder");
-
-				}
-			}
-		});
+		
 
 		// Close Selenium WebDriver on exit
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -164,6 +159,7 @@ public class MainFrame extends JFrame {
 		pnlSetting.add(lblSettings);
 
 		JButton btnLoad = new JButton("Load");
+		
 		btnLoad.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -171,6 +167,7 @@ public class MainFrame extends JFrame {
 				// Load courses and their resources
 				// Using the Loader class From.SETTINGS
 				// After loading, add loaded elements to settings JList
+				btnLoad.setText("Reload");
 				settingsCourses = loader.loadCourses(From.SETTINGS);
 
 				for (Course course : settingsCourses) {
@@ -181,7 +178,7 @@ public class MainFrame extends JFrame {
 					listSettingsModel.addElement(settingsCourses.get(i).getResources().getRoot());
 				}
 
-				// Load courses and their resources
+				// Load courses and their resources//
 				// Using the Loader class From.SETTINGS
 
 				// After loading, add loaded elements to settings JList
@@ -229,14 +226,15 @@ public class MainFrame extends JFrame {
 		JButton btnImportChanges = new JButton("Import Changes From itsLearning");
 		btnImportChanges.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				LinkedList<Course> ll = new LinkedList<Course>();
+				LinkedList<Element> ll = new LinkedList<Element>();
 				for (int i = 0; i < itsLearningCourses.size(); i++) {
 					if (settingsCourses.contains(itsLearningCourses.get(i)) != true
 							&& settings.getBlockedElements().contains(itsLearningCourses.get(i)) != true) {
-						ll.add(itsLearningCourses.get(i));
+						ll.add(itsLearningCourses.get(i).getResources().getRoot().getData());
 					}
 				}
-				// downloadDialog Açýlacak
+				DownloadDialog dialog = new DownloadDialog(driver,settings,loader,ll);
+				dialog.setVisible(true);
 			}
 		});
 		if (listItsLearningModel.isEmpty() != true && listSettingsModel.isEmpty() != true)
@@ -282,12 +280,12 @@ public class MainFrame extends JFrame {
 				// tn eklendi.
 
 				TreeNode<Element> tn = new TreeNode<Element>();
-				tn = listItsLearningModel.getElementAt(0).getParent().getParent();
-				if (tn != null) {
+				tn = listItsLearningModel.getElementAt(0);
+				if (tn.getParent().getParent() != null) {
 					listItsLearningModel.clear();
-					for (int j = 0; j < tn.getNumberOfChildren(); j++) {
+					for (int j = 0; j < tn.getParent().getParent().getNumberOfChildren(); j++) {
 
-						listItsLearningModel.addElement(tn.getChildAt(j));
+						listItsLearningModel.addElement(tn.getParent().getParent().getChildAt(j));
 					}
 				} else {
 					listItsLearningModel.clear();
@@ -348,7 +346,7 @@ public class MainFrame extends JFrame {
 		);
 		btnBlockElement.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnBlockElement.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnBlockElement.setEnabled(false);
+		btnBlockElement.setEnabled(true);
 		btnBlockElement.setBounds(42, 64, 113, 23);
 		pnlElementItsLearning.add(btnBlockElement);
 

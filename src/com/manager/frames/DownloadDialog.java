@@ -11,6 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.awt.event.ActionEvent;
 import javax.swing.border.EtchedBorder;
@@ -42,8 +44,8 @@ public class DownloadDialog extends JFrame {
 	private JTextField txtElementNameDownload;
 	private JTextField txtElementTypeDownload;
 	
-	// Parametric constructor
-	public DownloadDialog(WebDriver driver, Settings settings, Loader loader) {
+	// Parametric constructor//
+	public DownloadDialog(WebDriver driver, Settings settings, Loader loader,LinkedList<Element> downloadElements) {
 			
 		listChangesModel = new DefaultListModel<TreeNode<Element>>();
 			
@@ -54,6 +56,38 @@ public class DownloadDialog extends JFrame {
 		this.driver = driver;
 		this.settings = settings;
 		this.loader = loader;
+		this.downloadElements = downloadElements;
+		
+		//downloadElements listesindeki Elementlar JList’e 
+		for (int i = 0; i < downloadElements.size(); i++) {
+			listChangesModel.addElement(new TreeNode(downloadElements.get(i)));
+		}
+		
+		listChanges.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if (arg0.getClickCount() == 2) {
+					TreeNode<Element> selected = listChanges.getSelectedValue();
+					int noc = listChanges.getSelectedValue().getNumberOfChildren();
+					listChangesModel.clear();
+					for (int j = 0; j < noc; j++) 
+						listChangesModel.addElement(selected.getChildAt(j));
+					}
+					else if (arg0.getClickCount() == 1) {
+						TreeNode<Element> selected = listChanges.getSelectedValue();
+						txtElementNameDownload.setText(selected.toString());
+						if (selected.getNumberOfChildren() == 0)
+							txtElementNameDownload.setText("file");
+						else
+							txtElementTypeDownload.setText("folder");
+
+					}
+
+				}
+			}
+		);
+
+		
 	}
 
 	private void initialiseComponents() {
@@ -77,6 +111,30 @@ public class DownloadDialog extends JFrame {
 		lblReviewChanges.setFont(new Font("Tahoma", Font.BOLD, 18));
 		
 		JButton btnUpOneLevel = new JButton("Up One Level");
+		btnUpOneLevel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				TreeNode<Element> tn = new TreeNode<Element>();
+				tn = listChangesModel.getElementAt(0);
+				if (tn.getParent().getParent() != null) {
+					listChangesModel.clear();
+					for (int j = 0; j < tn.getParent().getParent().getNumberOfChildren(); j++) {
+
+						listChangesModel.addElement(tn.getParent().getParent().getChildAt(j));
+					}
+				} else {
+					listChangesModel.clear();
+					for (int i = 0; i < downloadElements.size(); i++) {
+
+						listChangesModel.addElement(new TreeNode(downloadElements.get(i)));
+					}
+				}
+				
+				
+				
+				
+			}
+		});
 		btnUpOneLevel.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnUpOneLevel.setBounds(10, 36, 196, 23);
 		pnlChanges.add(btnUpOneLevel);
@@ -88,7 +146,7 @@ public class DownloadDialog extends JFrame {
 		
 		JPanel pnlElementDownload = new JPanel();
 		pnlElementDownload.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		pnlElementDownload.setBounds(218, 125, 180, 101);
+		pnlElementDownload.setBounds(218, 125, 180, 68);
 		pnlChanges.add(pnlElementDownload);
 		pnlElementDownload.setLayout(null);
 		
@@ -114,19 +172,15 @@ public class DownloadDialog extends JFrame {
 		pnlElementDownload.add(txtElementTypeDownload);
 		txtElementTypeDownload.setColumns(10);
 		
-		JButton btnRemove = new JButton("Remove");
-		btnRemove.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
-		btnRemove.setEnabled(false);
-		btnRemove.setBounds(46, 67, 89, 23);
-		pnlElementDownload.add(btnRemove);
-		
 		JButton btnDownload = new JButton("Download New Files");
 		btnDownload.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnDownload.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				loader.download(downloadElements);
 			}
 		});
-		btnDownload.setBounds(234, 239, 149, 23);
+		btnDownload.setBounds(228, 213, 149, 23);
 		pnlChanges.add(btnDownload);
 		
 		JLabel lblSelectedElement = new JLabel("Selected Element");
