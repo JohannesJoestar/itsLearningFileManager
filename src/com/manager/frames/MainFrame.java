@@ -68,7 +68,6 @@ public class MainFrame extends JFrame {
 		initialiseComponents();
 
 		// ElementListCellRenderer is responsible for showing icons of the added
-		// Elements
 		ElementListCellRenderer listRenderer = new ElementListCellRenderer();
 		listItsLearning.setCellRenderer(listRenderer);
 		listSettings.setCellRenderer(listRenderer);
@@ -79,26 +78,30 @@ public class MainFrame extends JFrame {
 		this.itsLearningCourses = itsLearningCourses;
 		this.settingsCourses = new LinkedList<Course>();
 
-		// Load courses sent from
-
-		// Load courses sent from
-
+		// Load courses sent from LoginFrame
 		for (int i = 0; i < itsLearningCourses.size(); i++) {
 			listItsLearningModel.addElement(itsLearningCourses.get(i).getRoot());
 		}
-		// double / one click on element
+		
+		// double / single click on element
 		listItsLearning.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				if (arg0.getClickCount() == 2) {
+					
 					TreeNode<Element> selected = listItsLearning.getSelectedValue();
 					int noc = listItsLearning.getSelectedValue().getNumberOfChildren();
 					listItsLearningModel.clear();
-					for (int j = 0; j < noc; j++)
+					
+					for (int j = 0; j < noc; j++) {
 						listItsLearningModel.addElement(selected.getChildAt(j));
+					}
+					
 				} else if (arg0.getClickCount() == 1) {
+					
 					TreeNode<Element> selected = listItsLearning.getSelectedValue();
 					txtElementNameItsLearning.setText(selected.toString());
+					
 					if (selected.getNumberOfChildren() == 0)
 						txtElementTypeItsLearning.setText("file");
 					else
@@ -170,15 +173,10 @@ public class MainFrame extends JFrame {
 					course.setRoot(loader.loadResources(course, From.SETTINGS).getRoot());
 				}
 				listSettingsModel.clear();
+				
 				for (int i = 0; i < settingsCourses.size(); i++) {
 					listSettingsModel.addElement(settingsCourses.get(i).getRoot());
 				}
-
-				// Load courses and their resources//
-				// Using the Loader class From.SETTINGS
-
-				// After loading, add loaded elements to settings JList
-
 			}
 		});
 		btnLoad.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
@@ -222,14 +220,13 @@ public class MainFrame extends JFrame {
 		JButton btnImportChanges = new JButton("Import Changes From itsLearning");
 		btnImportChanges.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//
-				LinkedList<Element> ll = new LinkedList<Element>();
+				
+				LinkedList<Element> list = new LinkedList<Element>();
 				for (int j = 0; j < itsLearningCourses.size(); j++) {
-					ll.addAll(buildFileList(itsLearningCourses.get(j).getRoot(),
-							new LinkedList<Element>()));
+					list.addAll(loader.buildFileList(itsLearningCourses.get(j).getRoot(), new LinkedList<Element>()));
 				}
 
-				DownloadDialog dialog = new DownloadDialog(driver, settings, loader, ll);
+				DownloadDialog dialog = new DownloadDialog(driver, settings, loader, list);
 				dialog.setVisible(true);
 			}
 		});
@@ -245,7 +242,6 @@ public class MainFrame extends JFrame {
 		JButton btnChangeFolder = new JButton("Change Installation Folder");
 		btnChangeFolder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-
 				settings.promptInstallationPath();
 			}
 		});
@@ -389,26 +385,6 @@ public class MainFrame extends JFrame {
 		contentPane.add(lblStatus);
 	}
 
-	public LinkedList<Element> buildFileList(TreeNode<Element> root, LinkedList<Element> list) {
-		int size = root.getChildren().size();
-		if (settings.getBlockedElements().contains(root.getData())) {
-			return list;
-		}
-		for (int i = 0; i < size; i++) {
-
-			TreeNode<Element> child = root.getChildAt(i);
-			for (int k = 0; k < settings.getBlockedElements().size(); k++) {
-				if (child.getData() == settings.getBlockedElements().get(k)) {
-					continue;
-				} else {
-					list.add(child.getData());
-
-				}
-			}
-
-		}
-		return list;
-	}
 
 	// Get & Set
 	// Driver

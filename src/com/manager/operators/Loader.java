@@ -288,7 +288,7 @@ public class Loader {
 				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href));
 				
 				// Recursively add child nodes
-				if (type.equals("folder")){
+				if (type == (Type.FOLDER)){
 					root.addChild(traverseFolders(node, From.ITSLEARNING));
 					System.out.println(" ");
 				} else {
@@ -318,9 +318,8 @@ public class Loader {
 				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href));
 				
 				// Recursively add child nodes
-				if (type.equals("folder")){
+				if (type == (Type.FOLDER)){
 					root.addChild(traverseFolders(node, From.SETTINGS));
-					System.out.println(" ");
 				} else {
 					root.addChild(node);
 				}
@@ -342,18 +341,28 @@ public class Loader {
 	
 	// Traverses a given tree and builds the list given as paramater
 	// This is auxilary to the getAllFilesFromTree() method
-	private LinkedList<Element> buildFileList(TreeNode<Element> root, LinkedList<Element> list){
+	public LinkedList<Element> buildFileList(TreeNode<Element> root, LinkedList<Element> list){
 		int size = root.getChildren().size();
+		
+		// Filter blocked courses
+		if (settings.getBlockedElements().contains(root.getData())) {
+			return list;
+		}
+		
 		for (int i = 0; i < size; i++){
 			
 			TreeNode<Element> child = root.getChildAt(i);
 			
-			// Only "file" type Elements will beadded since we can't "download folders"
+			// Filter blocked elements
+			if (settings.getBlockedElements().contains(child.getData())) {
+				continue;
+			}
+			
+			// Only "file" type Elements will be added since we can't "download folders"
 			if (child.getData().getType() == Type.FOLDER){
 				buildFileList(child, list);
 			} else {
 				list.add(child.getData());
-				continue;
 			}
 		}
 		return list;
