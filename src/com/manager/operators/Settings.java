@@ -73,7 +73,7 @@ public class Settings {
 							String[] elements = content.split(",");
 							for (String element : elements){
 								String[] attributes = element.split("-");
-								blockedElements.add(new Element(attributes[0], attributes[1], ((attributes[2] == "folder") ? Type.FOLDER : Type.FILE), attributes[3])); 
+								blockedElements.add(new Element(attributes[0], attributes[1], ((attributes[2] == "folder") ? Type.FOLDER : Type.FILE), attributes[3], true)); 
 							}
 						} else {
 							this.setInstallationPath(content);

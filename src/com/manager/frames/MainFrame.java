@@ -14,6 +14,7 @@ import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
 import com.structures.tree.TreeNode;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
@@ -34,6 +35,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 public class MainFrame extends JFrame {
 
@@ -204,7 +206,7 @@ public class MainFrame extends JFrame {
 					list.addAll(loader.buildFileList(itsLearningCourses.get(j).getRoot(), new LinkedList<Element>()));
 				}
 
-				DownloadDialog dialog = new DownloadDialog(driver, settings, loader, list);
+				DownloadDialog dialog = new DownloadDialog(settings, loader, list);
 				dialog.setVisible(true);
 			}
 		});
@@ -246,8 +248,6 @@ public class MainFrame extends JFrame {
 		JButton btnUpItsLearning = new JButton("Up One Level");
 		btnUpItsLearning.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-
-				// tn eklendi.
 
 				TreeNode<Element> tn = new TreeNode<Element>();
 				tn = listItsLearningModel.getElementAt(0);
@@ -301,19 +301,58 @@ public class MainFrame extends JFrame {
 		pnlElementItsLearning.setLayout(null);
 
 		JButton btnBlockElement = new JButton("Block Element");
-		btnBlockElement.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				// Selected element should be added to
-				// blockedCourses property of Settings class
+		btnBlockElement.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				TreeNode<Element> node = listItsLearning.getSelectedValue();
 
-				settings.getBlockedElements().add(listItsLearning.getSelectedValue().getData());
+				try {
+					Element element = node.getData();
+					if (btnBlockElement.getText().equals("Block Element")) {
+						
+						// Adjust element icon
+						if (element.getType() == com.manager.enums.Type.FILE){
+							element.setIcon(ImageIO.read(new File("./resources/blocked_file_icon.png")));
+						} else {
+							element.setIcon(ImageIO.read(new File("./resources/blocked_folder_icon.png")));
+						}
+						
+						// Block the element
+						settings.getBlockedElements().add(node.getData());
+						
+					} else {
+						
+						// Adjust element icon
+						if (element.getType() == com.manager.enums.Type.FILE){
+							element.setIcon(ImageIO.read(new File("./resources/file_icon.png")));
+						} else {
+							element.setIcon(ImageIO.read(new File("./resources/folder_icon.png")));
+						}
+						
+						// Unblock the element
+						settings.getBlockedElements().remove(settings.getBlockedElements().indexOf(element));
+					}
+				} catch (Exception E) {
+					return;
+				}
+				
+				// Update list
+				settings.save();
+				if (node.getParent().getParent() != null) {
+					listItsLearningModel.clear();
+					for (int j = 0; j < node.getParent().getParent().getNumberOfChildren(); j++) {
 
+						listItsLearningModel.addElement(node.getParent().getParent().getChildAt(j));
+					}
+				} else {
+					listItsLearningModel.clear();
+					for (int i = 0; i < itsLearningCourses.size(); i++) {
+
+						listItsLearningModel.addElement(itsLearningCourses.get(i).getRoot());
+					}
+				}
 			}
-
-		}
-
-		);
+		});
 		btnBlockElement.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnBlockElement.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnBlockElement.setEnabled(true);

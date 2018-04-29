@@ -21,6 +21,7 @@ import javax.swing.border.SoftBevelBorder;
 
 import org.openqa.selenium.WebDriver;
 
+import com.manager.eventhandlers.MouseListener;
 import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Element;
@@ -33,19 +34,19 @@ public class DownloadDialog extends JFrame {
 	
 	// References
 	private LinkedList<Element> downloadElements;
-	private WebDriver driver;
 	private Settings settings;
 	private Loader loader;
 	
 	// Components
 	private JPanel contentPane;
+	private JPanel pnlChanges;
 	private JList<TreeNode<Element>> listChanges;
 	private DefaultListModel<TreeNode<Element>> listChangesModel;
 	private JTextField txtElementNameDownload;
 	private JTextField txtElementTypeDownload;
 	
 	// Parametric constructor//
-	public DownloadDialog(WebDriver driver, Settings settings, Loader loader,LinkedList<Element> downloadElements) {
+	public DownloadDialog(Settings settings, Loader loader,LinkedList<Element> downloadElements) {
 			
 		listChangesModel = new DefaultListModel<TreeNode<Element>>();
 			
@@ -53,40 +54,16 @@ public class DownloadDialog extends JFrame {
 			
 		listChanges.setCellRenderer(new ElementListCellRenderer());
 		
-		this.driver = driver;
 		this.settings = settings;
 		this.loader = loader;
 		this.downloadElements = downloadElements;
 		
 		//downloadElements listesindeki Elementlar JList’e 
 		for (int i = 0; i < downloadElements.size(); i++) {
-			listChangesModel.addElement(new TreeNode(downloadElements.get(i)));
+			listChangesModel.addElement(new TreeNode<Element>(downloadElements.get(i)));
 		}
 		
-		listChanges.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				if (arg0.getClickCount() == 2) {
-					TreeNode<Element> selected = listChanges.getSelectedValue();
-					int noc = listChanges.getSelectedValue().getNumberOfChildren();
-					listChangesModel.clear();
-					for (int j = 0; j < noc; j++) 
-						listChangesModel.addElement(selected.getChildAt(j));
-					}
-					else if (arg0.getClickCount() == 1) {
-						TreeNode<Element> selected = listChanges.getSelectedValue();
-						txtElementNameDownload.setText(selected.toString());
-						if (selected.getNumberOfChildren() == 0)
-							txtElementNameDownload.setText("file");
-						else
-							txtElementTypeDownload.setText("folder");
-
-					}
-
-				}
-			}
-		);
-
+		listChanges.addMouseListener(new MouseListener(settings, listChangesModel, pnlChanges));
 		
 	}
 
@@ -99,7 +76,7 @@ public class DownloadDialog extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JPanel pnlChanges = new JPanel();
+		pnlChanges = new JPanel();
 		pnlChanges.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		pnlChanges.setBounds(10, 11, 410, 441);
 		contentPane.add(pnlChanges);
@@ -110,38 +87,9 @@ public class DownloadDialog extends JFrame {
 		pnlChanges.add(lblReviewChanges);
 		lblReviewChanges.setFont(new Font("Tahoma", Font.BOLD, 18));
 		
-		JButton btnUpOneLevel = new JButton("Up One Level");
-		btnUpOneLevel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				TreeNode<Element> tn = new TreeNode<Element>();
-				tn = listChangesModel.getElementAt(0);
-				if (tn.getParent().getParent() != null) {
-					listChangesModel.clear();
-					for (int j = 0; j < tn.getParent().getParent().getNumberOfChildren(); j++) {
-
-						listChangesModel.addElement(tn.getParent().getParent().getChildAt(j));
-					}
-				} else {
-					listChangesModel.clear();
-					for (int i = 0; i < downloadElements.size(); i++) {
-
-						listChangesModel.addElement(new TreeNode(downloadElements.get(i)));
-					}
-				}
-				
-				
-				
-				
-			}
-		});
-		btnUpOneLevel.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
-		btnUpOneLevel.setBounds(10, 36, 196, 23);
-		pnlChanges.add(btnUpOneLevel);
-		
 		listChanges = new JList<TreeNode<Element>>(listChangesModel);
 		listChanges.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		listChanges.setBounds(10, 64, 196, 367);
+		listChanges.setBounds(10, 35, 196, 396);
 		pnlChanges.add(listChanges);
 		
 		JPanel pnlElementDownload = new JPanel();

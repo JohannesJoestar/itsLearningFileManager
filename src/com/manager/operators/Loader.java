@@ -106,7 +106,7 @@ public class Loader {
 		
 		// Resulting Tree
 		Tree<Element> resources = new Tree<Element>();
-		Element rootElement = new Element(course.getName(), "/" + course.getName(), Type.FOLDER, course.getResourcesURL());
+		Element rootElement = new Element(course.getName(), "/" + course.getName(), Type.FOLDER, course.getResourcesURL(), false);
 					
 		// Load from itsLearning
 		if (side == From.ITSLEARNING){
@@ -285,7 +285,7 @@ public class Loader {
 				Type type = (href.substring(29, 30).equals("F") ? (Type.FOLDER) : (Type.FILE));
 				
 				// Define and build TreeNode
-				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href));
+				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href, false));
 				
 				// Recursively add child nodes
 				if (type == (Type.FOLDER)){
@@ -315,7 +315,7 @@ public class Loader {
 				String href = "";
 				
 				// Define and build TreeNode
-				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href));
+				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href, false));
 				
 				// Recursively add child nodes
 				if (type == (Type.FOLDER)){

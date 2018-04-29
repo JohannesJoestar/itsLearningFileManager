@@ -18,7 +18,7 @@ public class Element {
 	private String href;
 	
 	// Parametric Constructor
-	public Element(String name, String path, Type type, String href){
+	public Element(String name, String path, Type type, String href, boolean blocked){
 		this.setName(name);
 		this.setPath(path);
 		this.setType(type);
