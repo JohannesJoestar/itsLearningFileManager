@@ -2,12 +2,11 @@ package com.structures.itsLearning;
 import com.structures.tree.Tree;
 
 //Data structure for Courses
-public class Course {
+public class Course extends Tree<Element>{
 		
 	// Properties and references
 	private String name;
 	private String resourcesURL;
-	private Tree<Element> resources;
 	
 
 	
@@ -22,18 +21,12 @@ public class Course {
 	public String getName(){
 		return this.name;
 	}
-	public Tree<Element> getResources(){
-		return this.resources;
-	}
 	public String getResourcesURL(){
 		return this.resourcesURL;
 	}
 	// Set
 	public void setName(String name){
 		this.name = name;
-	}
-	public void setResources(Tree<Element> resources){
-		this.resources = resources;
 	}
 	public void setResourcesURL(String resourcesURL){
 		this.resourcesURL = resourcesURL;
