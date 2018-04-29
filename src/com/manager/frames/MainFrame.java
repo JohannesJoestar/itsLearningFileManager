@@ -84,7 +84,7 @@ public class MainFrame extends JFrame {
 		// Load courses sent from
 
 		for (int i = 0; i < itsLearningCourses.size(); i++) {
-			listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
+			listItsLearningModel.addElement(itsLearningCourses.get(i).getRoot());
 		}
 		// double / one click on element
 		listItsLearning.addMouseListener(new MouseAdapter() {
@@ -167,11 +167,11 @@ public class MainFrame extends JFrame {
 				settingsCourses = loader.loadCourses(From.SETTINGS);
 
 				for (Course course : settingsCourses) {
-					course.setResources(loader.loadResources(course, From.SETTINGS));
+					course.setRoot(loader.loadResources(course, From.SETTINGS).getRoot());
 				}
 				listSettingsModel.clear();
 				for (int i = 0; i < settingsCourses.size(); i++) {
-					listSettingsModel.addElement(settingsCourses.get(i).getResources().getRoot());
+					listSettingsModel.addElement(settingsCourses.get(i).getRoot());
 				}
 
 				// Load courses and their resources//
@@ -225,7 +225,7 @@ public class MainFrame extends JFrame {
 				//
 				LinkedList<Element> ll = new LinkedList<Element>();
 				for (int j = 0; j < itsLearningCourses.size(); j++) {
-					ll.addAll(buildFileList(itsLearningCourses.get(j).getResources().getRoot(),
+					ll.addAll(buildFileList(itsLearningCourses.get(j).getRoot(),
 							new LinkedList<Element>()));
 				}
 
@@ -287,7 +287,7 @@ public class MainFrame extends JFrame {
 					listItsLearningModel.clear();
 					for (int i = 0; i < itsLearningCourses.size(); i++) {
 
-						listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
+						listItsLearningModel.addElement(itsLearningCourses.get(i).getRoot());
 					}
 				}
 			}
@@ -304,12 +304,12 @@ public class MainFrame extends JFrame {
 				itsLearningCourses = loader.loadCourses(From.ITSLEARNING);
 
 				for (Course course : itsLearningCourses) {
-					course.setResources(loader.loadResources(course, From.ITSLEARNING));
+					course.setRoot(loader.loadResources(course, From.ITSLEARNING).getRoot());
 				}
 
 				listItsLearningModel.clear();
 				for (int i = 0; i < itsLearningCourses.size(); i++) {
-					listItsLearningModel.addElement(itsLearningCourses.get(i).getResources().getRoot());
+					listItsLearningModel.addElement(itsLearningCourses.get(i).getRoot());
 				}
 
 			}

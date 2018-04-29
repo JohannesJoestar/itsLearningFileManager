@@ -229,7 +229,7 @@ public class LoginFrame extends JFrame {
 				loader = new Loader(driver, settings);	
 				courses = loader.loadCourses(From.ITSLEARNING);
 				for (Course course : courses){
-					course.setResources(loader.loadResources(course, From.ITSLEARNING));
+					course.setRoot(loader.loadResources(course, From.ITSLEARNING).getRoot());
 				}
 				
 
