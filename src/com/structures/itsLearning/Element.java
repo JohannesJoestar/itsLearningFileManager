@@ -6,23 +6,25 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.manager.enums.Type;
+
 public class Element {
 	
 	// Attributes
 	private Image icon;
+	private Type type;
 	private String name;
 	private String path;
-	private String type;
 	private String href;
 	
 	// Parametric Constructor
-	public Element(String name, String path, String type, String href){
+	public Element(String name, String path, Type type, String href){
 		this.setName(name);
 		this.setPath(path);
 		this.setType(type);
 		this.setHref(href);
 		try {
-			if (type == "file"){
+			if (type == Type.FILE){
 				this.setIcon(ImageIO.read(new File("./resources/file_icon.png")));
 			} else {
 				this.setIcon(ImageIO.read(new File("./resources/folder_icon.png")));
@@ -72,10 +74,10 @@ public class Element {
 		this.path = path;
 	}
 	// Type
-	public String getType() {
+	public Type getType() {
 		return type;
 	}
-	public void setType(String type) {
+	public void setType(Type type) {
 		this.type = type;
 	}
 	// Href

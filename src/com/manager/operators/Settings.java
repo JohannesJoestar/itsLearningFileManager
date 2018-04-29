@@ -13,6 +13,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileSystemView;
 
+import com.manager.enums.Type;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
 
@@ -82,7 +83,7 @@ public class Settings {
 							String[] elements = content.split(",");
 							for (String element : elements){
 								String[] attributes = element.split("-");
-								blockedElements.add(new Element(attributes[0], attributes[1], attributes[2], attributes[3])); 
+								blockedElements.add(new Element(attributes[0], attributes[1], ((attributes[2] == "folder") ? Type.FOLDER : Type.FILE), attributes[3])); 
 							}
 						} else {
 							this.setInstallationPath(content);

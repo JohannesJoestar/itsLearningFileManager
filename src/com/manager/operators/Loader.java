@@ -12,6 +12,8 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.manager.enums.From;
+import com.manager.enums.Type;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
 import com.structures.tree.Tree;
@@ -104,7 +106,7 @@ public class Loader {
 		
 		// Resulting Tree
 		Tree<Element> resources = new Tree<Element>();
-		Element rootElement = new Element(course.getName(), "/" + course.getName(), "folder", course.getResourcesURL());
+		Element rootElement = new Element(course.getName(), "/" + course.getName(), Type.FOLDER, course.getResourcesURL());
 					
 		// Load from itsLearning
 		if (side == From.ITSLEARNING){
@@ -280,7 +282,7 @@ public class Loader {
 				String name = entry.getAttribute("title");
 				String path = (root.getData()).getPath() + "/" + name;
 				String href = entry.getAttribute("href");
-				String type = (href.substring(29, 30).equals("F") ? ("folder") : ("file"));
+				Type type = (href.substring(29, 30).equals("F") ? (Type.FOLDER) : (Type.FILE));
 				
 				// Define and build TreeNode
 				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href));
@@ -309,7 +311,7 @@ public class Loader {
 				// Attributes
 				String name = files[i].getName();
 				String path = (root.getData().getPath()) + "/" + name;
-				String type = ((files[i].isDirectory()) ? ("folder") : ("file"));
+				Type type = ((files[i].isDirectory()) ? (Type.FOLDER) : (Type.FILE));
 				String href = "";
 				
 				// Define and build TreeNode
@@ -347,7 +349,7 @@ public class Loader {
 			TreeNode<Element> child = root.getChildAt(i);
 			
 			// Only "file" type Elements will beadded since we can't "download folders"
-			if (child.getData().getType() == "folder"){
+			if (child.getData().getType() == Type.FOLDER){
 				buildFileList(child, list);
 			} else {
 				list.add(child.getData());

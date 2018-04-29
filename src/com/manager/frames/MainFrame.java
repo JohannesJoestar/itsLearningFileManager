@@ -6,7 +6,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.openqa.selenium.WebDriver;
 
-import com.manager.operators.From;
+import com.manager.enums.From;
 import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
