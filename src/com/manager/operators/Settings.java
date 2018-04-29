@@ -124,6 +124,7 @@ public class Settings {
 				continue;
 			}
 		}
+		this.save();
 		
 	}
 	
