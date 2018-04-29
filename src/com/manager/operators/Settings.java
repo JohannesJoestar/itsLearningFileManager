@@ -21,14 +21,12 @@ public class Settings {
 	
 	// Class for user settings
 	// Properties and references
-	private LinkedList<Course> blockedCourses;
 	private LinkedList<Element> blockedElements;
 	private String path;
 	private String installationPath;
 	
 	// Default constructor
 	public Settings(){
-		this.setBlockedCourses(null);
 		this.setBlockedElements(null);
 		this.setInstallationPath(null);
 	}
@@ -37,8 +35,6 @@ public class Settings {
 	public boolean loadSettingsFromPath(String path){
 		
 		this.setPath(path);
-		
-		blockedCourses = new LinkedList<Course>();
 		blockedElements = new LinkedList<Element>();
 		
 		// Load settings file
@@ -73,13 +69,7 @@ public class Settings {
 						String header = line.substring(0, 12);
 						String content = line.substring(12);
 						
-						if (header.equals("[Courses##]:")){
-							String[] courses = content.split(",");
-							for (String course : courses){
-								String[] attributes = course.split("-");
-								blockedCourses.add(new Course(attributes[0], attributes[1]));
-							}
-						} else if (header.equals("[Elements#]:")){
+						if (header.equals("[Elements#]:")){
 							String[] elements = content.split(",");
 							for (String element : elements){
 								String[] attributes = element.split("-");
@@ -97,7 +87,6 @@ public class Settings {
 				JOptionPane.showMessageDialog(null, "Chosen file is not a Settings file for this application or is corrupted.");
 				
 				// Revert any changes
-				this.getBlockedCourses().clear();
 				this.getBlockedElements().clear();
 				this.setInstallationPath(null);
 				return false;
@@ -113,13 +102,8 @@ public class Settings {
 	
 	// Load default settings
 	public void loadDefault(){
-		
-		blockedCourses = new LinkedList<Course>();
 		blockedElements = new LinkedList<Element>();
-		
-		promptInstallationPath();
-		
-		
+		promptInstallationPath();	
 	}
 	
 	// Prompt user for path to resources folder
@@ -152,15 +136,6 @@ public class Settings {
 		try {
 			writer = new BufferedWriter(new FileWriter(settings.getAbsolutePath()));
 			
-			String courses = "[Courses##]:";
-			for (int i = 0; i < blockedCourses.size(); i++){
-				if (i != (blockedCourses.size() - 1)){
-					courses = courses + (blockedCourses.get(i)).toString() + ",";
-				} else {
-					courses = courses + (blockedCourses.get(i)).toString();
-				}
-			}
-			
 			String elements = "[Elements#]:";
 			for (int i = 0; i < blockedElements.size(); i++){
 				if (i != (blockedElements.size() - 1)){
@@ -172,7 +147,7 @@ public class Settings {
 			
 			String url = "[Resources]:" + installationPath;
 			
-			writer.write(courses + "\n" + elements + "\n" + url);
+			writer.write(elements + "\n" + url);
 			
 			writer.close();
 		} catch (IOException e) {
@@ -187,17 +162,10 @@ public class Settings {
 	// toString()
 	@Override
 	public String toString(){
-		return (this.blockedCourses + "\n" + this.blockedElements + "\n" + this.installationPath );
+		return (this.blockedElements + "\n" + this.installationPath );
 	}
 
 	// Get & Set
-	// blockedCourses
-	public LinkedList<Course> getBlockedCourses() {
-		return blockedCourses;
-	}
-	public void setBlockedCourses(LinkedList<Course> blockedCourses) {
-		this.blockedCourses = blockedCourses;
-	}
 	// blockedElements
 	public LinkedList<Element> getBlockedElements() {
 		return blockedElements;
