@@ -125,39 +125,63 @@ public class Settings {
 			}
 		}
 		this.save();
-		
+	}
+	
+	public boolean promptSettingsPath(){
+		JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setAcceptAllFileFilterUsed(false);
+			
+		JOptionPane.showMessageDialog(null, "Pick the file where your settings should be saved.");
+		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+			File selectedFile = chooser.getSelectedFile();
+			this.setPath(selectedFile.getAbsolutePath());
+			return true;
+		} else {
+			JOptionPane.showMessageDialog(null, "Loading default settings, your settings will not be saved.");
+			this.loadDefault();
+			return false;
+		}
 	}
 	
 	// Save settings
 	public boolean save(){
 		
 		// Settings file to be saved
-		File settings = new File(this.getPath());
-		BufferedWriter writer;
-		try {
-			writer = new BufferedWriter(new FileWriter(settings.getAbsolutePath()));
-			
-			String elements = "[Elements#]:";
-			for (int i = 0; i < blockedElements.size(); i++){
-				if (i != (blockedElements.size() - 1)){
-					elements = elements + (blockedElements.get(i).toStringFull()) + ",";
-				} else {
-					elements = elements + (blockedElements.get(i).toStringFull());
+		if (this.getPath() == null) {
+			if (promptSettingsPath()) {
+				File settings = new File(this.getPath());
+				BufferedWriter writer;
+				try {
+					writer = new BufferedWriter(new FileWriter(settings.getAbsolutePath()));
+					
+					String elements = "[Elements#]:";
+					for (int i = 0; i < blockedElements.size(); i++){
+						if (i != (blockedElements.size() - 1)){
+							elements = elements + (blockedElements.get(i).toStringFull()) + ",";
+						} else {
+							elements = elements + (blockedElements.get(i).toStringFull());
+						}
+					}
+					
+					String url = "[Resources]:" + installationPath;
+					
+					writer.write(elements + "\n" + url);
+					
+					writer.close();
+				} catch (IOException e) {
+					
+					JOptionPane.showMessageDialog(null, "Failed to write to the settings file.");
+					return false;
 				}
+				
+				return true;
+			} else {
+				return false;
 			}
-			
-			String url = "[Resources]:" + installationPath;
-			
-			writer.write(elements + "\n" + url);
-			
-			writer.close();
-		} catch (IOException e) {
-			
-			JOptionPane.showMessageDialog(null, "Failed to write to the settings file.");
-			return false;
 		}
-		
 		return true;
+		
 	}
 	
 	// toString()
