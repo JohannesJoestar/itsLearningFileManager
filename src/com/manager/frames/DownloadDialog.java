@@ -34,7 +34,6 @@ public class DownloadDialog extends JFrame {
 	
 	// References
 	private LinkedList<Element> downloadElements;
-	private Settings settings;
 	private Loader loader;
 	
 	// Components
@@ -54,7 +53,6 @@ public class DownloadDialog extends JFrame {
 			
 		listChanges.setCellRenderer(new ElementListCellRenderer());
 		
-		this.settings = settings;
 		this.loader = loader;
 		this.downloadElements = downloadElements;
 		
