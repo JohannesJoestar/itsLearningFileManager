@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.manager.enums.Type;
+import com.manager.operators.FileListModel;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Element;
 import com.structures.tree.TreeNode;
@@ -23,12 +24,12 @@ public class MouseListener extends MouseAdapter{
 	// Properties and references
 	private Settings settings;
 	private JPanel infoPanel;
-	private DefaultListModel<TreeNode<Element>> listModel;
+	private FileListModel operator;
 	private boolean hasClickedOnce;
 	
 	// Parametric constructor
-	public MouseListener(Settings settings, DefaultListModel<TreeNode<Element>> listModel,  JPanel infoPanel){
-		this.listModel = listModel;
+	public MouseListener(Settings settings, FileListModel operator,  JPanel infoPanel){
+		this.operator = operator;
 		this.settings = settings;
 		this.infoPanel = infoPanel;
 	}
@@ -60,14 +61,9 @@ public class MouseListener extends MouseAdapter{
 		// Double click
 	    if (hasClickedOnce) {
 	    	
-	    	TreeNode<Element> selected = list.getSelectedValue();
-			int noc = list.getSelectedValue().getNumberOfChildren();
-			listModel.clear();
-			
-			for (int j = 0; j < noc; j++) {
-				listModel.addElement(selected.getChildAt(j));
-			}	
-
+	    	if (node.getData().getType() == Type.FOLDER){
+	    		operator.update(node);
+	    	}
 	        hasClickedOnce = false;
 	        
 	    } else { // Single click
@@ -79,7 +75,6 @@ public class MouseListener extends MouseAdapter{
 	    			fields.add((JTextField) component);
 	    		}
 	    	}
-	    	
 	    	fields.get(0).setText(node.getData().getName());
 	    	fields.get(1).setText((node.getData().getType() == Type.FOLDER) ? ("folder") : ("file"));
 	    	

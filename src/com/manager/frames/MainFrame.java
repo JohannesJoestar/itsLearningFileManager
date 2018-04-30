@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 
 import com.manager.enums.From;
 import com.manager.eventhandlers.MouseListener;
+import com.manager.operators.FileListModel;
 import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
@@ -56,8 +57,8 @@ public class MainFrame extends JFrame {
 	private JLabel lblStatus;
 	private JList<TreeNode<Element>> listSettings;
 	private JList<TreeNode<Element>> listItsLearning;
-	private DefaultListModel<TreeNode<Element>> listSettingsModel;
-	private DefaultListModel<TreeNode<Element>> listItsLearningModel;
+	private FileListModel settingsOperator;
+	private FileListModel itsLearningOperator;
 	private JTextField txtElementNameItsLearning;
 	private JTextField txtElementTypeItsLearning;
 	private JTextField txtElementNameSettings;
@@ -66,9 +67,15 @@ public class MainFrame extends JFrame {
 	// Parametric constructor
 	public MainFrame(WebDriver driver, Settings settings, Loader loader, LinkedList<Course> itsLearningCourses) {
 
+		this.driver = driver;
+		this.settings = settings;
+		this.loader = loader;
+		this.itsLearningCourses = itsLearningCourses;
+		this.settingsCourses = new LinkedList<Course>();
+		
 		// ListModel settings
-		listSettingsModel = new DefaultListModel<TreeNode<Element>>();
-		listItsLearningModel = new DefaultListModel<TreeNode<Element>>();
+		settingsOperator = new FileListModel();
+		itsLearningOperator = new FileListModel();
 
 		initialiseComponents();
 
@@ -76,21 +83,19 @@ public class MainFrame extends JFrame {
 		ElementListCellRenderer listRenderer = new ElementListCellRenderer();
 		listItsLearning.setCellRenderer(listRenderer);
 		listSettings.setCellRenderer(listRenderer);
-
-		this.driver = driver;
-		this.settings = settings;
-		this.loader = loader;
-		this.itsLearningCourses = itsLearningCourses;
-		this.settingsCourses = new LinkedList<Course>();
+		
+		// Assign info panels to operators
+		settingsOperator.setInfoPanel(pnlElementSettings);
+		itsLearningOperator.setInfoPanel(pnlElementItsLearning);
 
 		// Load courses sent from LoginFrame
-		for (int i = 0; i < itsLearningCourses.size(); i++) {
-			listItsLearningModel.addElement(itsLearningCourses.get(i).getRoot());
+		for (Course course : itsLearningCourses) {
+			itsLearningOperator.addElement(course.getRoot());
 		}
 		
 		// MouseEvent
-		listItsLearning.addMouseListener(new MouseListener(settings, listItsLearningModel, pnlElementItsLearning));
-		listSettings.addMouseListener(new MouseListener(settings, listSettingsModel, pnlElementSettings));
+		listItsLearning.addMouseListener(new MouseListener(settings, itsLearningOperator, pnlElementItsLearning));
+		listSettings.addMouseListener(new MouseListener(settings, settingsOperator, pnlElementSettings));
 
 		// Close Selenium WebDriver on exit
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -127,7 +132,7 @@ public class MainFrame extends JFrame {
 		contentPane.add(pnlSetting);
 		pnlSetting.setLayout(null);
 
-		listSettings = new JList<TreeNode<Element>>(listSettingsModel);
+		listSettings = new JList<TreeNode<Element>>(settingsOperator);
 		listSettings.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listSettings.setBounds(10, 75, 226, 364);
 		pnlSetting.add(listSettings);
@@ -137,22 +142,45 @@ public class MainFrame extends JFrame {
 		lblSettings.setBounds(10, 13, 163, 23);
 		pnlSetting.add(lblSettings);
 
-		JButton btnLoad = new JButton("Load");
+		JButton btnImportChanges = new JButton("Import Changes From itsLearning");
+		btnImportChanges.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				LinkedList<Element> downloadElements = new LinkedList<Element>();
+				for (Course course : itsLearningCourses) {
+					downloadElements.addAll(loader.getAllFilesFromTree(course));
+				}
 
+				DownloadDialog dialog = new DownloadDialog(settings, loader, downloadElements);
+				dialog.setVisible(true);
+			}
+		});
+		btnImportChanges.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
+		btnImportChanges.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		btnImportChanges.setBounds(248, 223, 192, 31);
+		pnlSetting.add(btnImportChanges);
+		
+		JButton btnLoad = new JButton("Load");
 		btnLoad.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
-				// Load courses and their resources
-				// Using the Loader class From.SETTINGS
-				// After loading, add loaded elements to settings JList
-				btnLoad.setText("Reload");
-				settingsCourses = loader.loadCourses(From.SETTINGS);
-
-				listSettingsModel.clear();
 				
-				for (int i = 0; i < settingsCourses.size(); i++) {
-					listSettingsModel.addElement(settingsCourses.get(i).getRoot());
+				// Load courses from user computer
+				settingsCourses = loader.loadCourses(From.SETTINGS);
+				
+				// Load elements into JListModels
+				TreeNode<Element> rootSettings = new TreeNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", false));
+				for (Course course : settingsCourses){
+					rootSettings.addChild(course.getRoot());
+				}
+				if (!btnImportChanges.isEnabled()){
+					btnImportChanges.setEnabled(true);
+				}
+				lblStatus.setText("Files loaded from computer, ready for changes import.");
+				settingsOperator.update(rootSettings);
+				
+				if (btnLoad.getText() == "Load"){
+					btnLoad.setText("Reload");
 				}
 			}
 		});
@@ -193,25 +221,7 @@ public class MainFrame extends JFrame {
 		lblSelectedSettings.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblSelectedSettings.setBounds(281, 115, 131, 17);
 		pnlSetting.add(lblSelectedSettings);
-
-		JButton btnImportChanges = new JButton("Import Changes From itsLearning");
-		btnImportChanges.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				LinkedList<Element> list = new LinkedList<Element>();
-				for (int j = 0; j < itsLearningCourses.size(); j++) {
-					list.addAll(loader.buildFileList(itsLearningCourses.get(j).getRoot(), new LinkedList<Element>()));
-				}
-
-				DownloadDialog dialog = new DownloadDialog(settings, loader, list);
-				dialog.setVisible(true);
-			}
-		});
-		btnImportChanges.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
-		btnImportChanges.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		btnImportChanges.setBounds(248, 223, 192, 31);
-		pnlSetting.add(btnImportChanges);
-
+		
 		JButton btnChangeFolder = new JButton("Change Installation Folder");
 		btnChangeFolder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -225,6 +235,13 @@ public class MainFrame extends JFrame {
 		JButton btnUpSettings = new JButton("Up One Level");
 		btnUpSettings.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnUpSettings.setBounds(10, 42, 107, 23);
+		btnUpSettings.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (itsLearningOperator.hasUpperLevel()){
+					itsLearningOperator.goUpOneLevel();
+				}
+			}
+		});
 		pnlSetting.add(btnUpSettings);
 
 		JPanel pnlItsLearning = new JPanel();
@@ -233,7 +250,7 @@ public class MainFrame extends JFrame {
 		contentPane.add(pnlItsLearning);
 		pnlItsLearning.setLayout(null);
 
-		listItsLearning = new JList<TreeNode<Element>>(listItsLearningModel);
+		listItsLearning = new JList<TreeNode<Element>>(itsLearningOperator);
 		listItsLearning.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listItsLearning.setBounds(10, 75, 226, 364);
 		pnlItsLearning.add(listItsLearning);
@@ -241,21 +258,8 @@ public class MainFrame extends JFrame {
 		JButton btnUpItsLearning = new JButton("Up One Level");
 		btnUpItsLearning.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-
-				TreeNode<Element> tn = new TreeNode<Element>();
-				tn = listItsLearningModel.getElementAt(0);
-				if (tn.getParent().getParent() != null) {
-					listItsLearningModel.clear();
-					for (int j = 0; j < tn.getParent().getParent().getNumberOfChildren(); j++) {
-
-						listItsLearningModel.addElement(tn.getParent().getParent().getChildAt(j));
-					}
-				} else {
-					listItsLearningModel.clear();
-					for (int i = 0; i < itsLearningCourses.size(); i++) {
-
-						listItsLearningModel.addElement(itsLearningCourses.get(i).getRoot());
-					}
+				if (settingsOperator.hasUpperLevel()){
+					settingsOperator.goUpOneLevel();
 				}
 			}
 		});
@@ -270,9 +274,9 @@ public class MainFrame extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				itsLearningCourses = loader.loadCourses(From.ITSLEARNING);
 
-				listItsLearningModel.clear();
-				for (int i = 0; i < itsLearningCourses.size(); i++) {
-					listItsLearningModel.addElement(itsLearningCourses.get(i).getRoot());
+				itsLearningOperator.clear();
+				for (Course course : itsLearningCourses) {
+					itsLearningOperator.addElement(course.getRoot());
 				}
 
 			}
@@ -327,19 +331,7 @@ public class MainFrame extends JFrame {
 				
 				// Update list
 				settings.save();
-				if (node.getParent().getParent() != null) {
-					listItsLearningModel.clear();
-					for (int j = 0; j < node.getParent().getParent().getNumberOfChildren(); j++) {
-
-						listItsLearningModel.addElement(node.getParent().getParent().getChildAt(j));
-					}
-				} else {
-					listItsLearningModel.clear();
-					for (int i = 0; i < itsLearningCourses.size(); i++) {
-
-						listItsLearningModel.addElement(itsLearningCourses.get(i).getRoot());
-					}
-				}
+				itsLearningOperator.update(node.getParent());
 			}
 		});
 		btnBlockElement.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
@@ -385,7 +377,7 @@ public class MainFrame extends JFrame {
 		lblInfoStatus.setBounds(12, 466, 56, 16);
 		contentPane.add(lblInfoStatus);
 
-		lblStatus = new JLabel("status");
+		lblStatus = new JLabel("");
 		lblStatus.setForeground(Color.GRAY);
 		lblStatus.setBounds(56, 466, 406, 16);
 		contentPane.add(lblStatus);
@@ -440,10 +432,10 @@ public class MainFrame extends JFrame {
 
 	// ListModels
 	public ListModel<TreeNode<Element>> getListSettingsModel() {
-		return listSettingsModel;
+		return settingsOperator;
 	}
 
 	public ListModel<TreeNode<Element>> getListItsLearningModel() {
-		return listItsLearningModel;
+		return itsLearningOperator;
 	}
 }

@@ -22,6 +22,7 @@ import javax.swing.border.SoftBevelBorder;
 import org.openqa.selenium.WebDriver;
 
 import com.manager.eventhandlers.MouseListener;
+import com.manager.operators.FileListModel;
 import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Element;
@@ -39,29 +40,28 @@ public class DownloadDialog extends JFrame {
 	// Components
 	private JPanel contentPane;
 	private JPanel pnlChanges;
+	private JPanel pnlElementDownload;
 	private JList<TreeNode<Element>> listChanges;
-	private DefaultListModel<TreeNode<Element>> listChangesModel;
+	private FileListModel operator;
 	private JTextField txtElementNameDownload;
 	private JTextField txtElementTypeDownload;
 	
 	// Parametric constructor//
 	public DownloadDialog(Settings settings, Loader loader,LinkedList<Element> downloadElements) {
-			
-		listChangesModel = new DefaultListModel<TreeNode<Element>>();
-			
-		initialiseComponents();
-			
-		listChanges.setCellRenderer(new ElementListCellRenderer());
 		
 		this.loader = loader;
-		this.downloadElements = downloadElements;
+		this.downloadElements = downloadElements;	
 		
-		//downloadElements listesindeki Elementlar JList’e 
-		for (int i = 0; i < downloadElements.size(); i++) {
-			listChangesModel.addElement(new TreeNode<Element>(downloadElements.get(i)));
+		operator = new FileListModel();
+		initialiseComponents();
+		listChanges.setCellRenderer(new ElementListCellRenderer());
+		operator.setInfoPanel(pnlElementDownload);
+		
+		for (Element element : downloadElements) {
+			operator.addElement(new TreeNode<Element>(element));
 		}
 		
-		listChanges.addMouseListener(new MouseListener(settings, listChangesModel, pnlChanges));
+		listChanges.addMouseListener(new MouseListener(settings, operator, pnlChanges));
 		
 	}
 
@@ -85,12 +85,12 @@ public class DownloadDialog extends JFrame {
 		pnlChanges.add(lblReviewChanges);
 		lblReviewChanges.setFont(new Font("Tahoma", Font.BOLD, 18));
 		
-		listChanges = new JList<TreeNode<Element>>(listChangesModel);
+		listChanges = new JList<TreeNode<Element>>(operator);
 		listChanges.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listChanges.setBounds(10, 35, 196, 396);
 		pnlChanges.add(listChanges);
 		
-		JPanel pnlElementDownload = new JPanel();
+		pnlElementDownload = new JPanel();
 		pnlElementDownload.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		pnlElementDownload.setBounds(218, 125, 180, 68);
 		pnlChanges.add(pnlElementDownload);
