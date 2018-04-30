@@ -72,7 +72,7 @@ public class Settings {
 						if (header.equals("[Elements#]:")){
 							String[] elements = content.split(",");
 							for (String element : elements){
-								String[] attributes = element.split("-");
+								String[] attributes = element.split("%");
 								blockedElements.add(new Element(attributes[0], attributes[1], ((attributes[2] == "folder") ? Type.FOLDER : Type.FILE), attributes[3], true)); 
 							}
 						} else {
@@ -179,8 +179,34 @@ public class Settings {
 			} else {
 				return false;
 			}
+		} else {
+			File settings = new File(this.getPath());
+			BufferedWriter writer;
+			try {
+				writer = new BufferedWriter(new FileWriter(settings.getAbsolutePath()));
+				
+				String elements = "[Elements#]:";
+				for (int i = 0; i < blockedElements.size(); i++){
+					if (i != (blockedElements.size() - 1)){
+						elements = elements + (blockedElements.get(i).toStringFull()) + ",";
+					} else {
+						elements = elements + (blockedElements.get(i).toStringFull());
+					}
+				}
+				
+				String url = "[Resources]:" + installationPath;
+				
+				writer.write(elements + "\n" + url);
+				
+				writer.close();
+			} catch (IOException e) {
+				
+				JOptionPane.showMessageDialog(null, "Failed to write to the settings file.");
+				return false;
+			}
+			
+			return true;
 		}
-		return true;
 		
 	}
 	

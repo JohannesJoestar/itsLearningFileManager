@@ -24,10 +24,18 @@ public class Element {
 		this.setType(type);
 		this.setHref(href);
 		try {
-			if (type == Type.FILE){
-				this.setIcon(ImageIO.read(new File("./resources/file_icon.png")));
+			if (blocked) {
+				if (type == Type.FILE){
+					this.setIcon(ImageIO.read(new File("./resources/blocked_file_icon.png")));
+				} else {
+					this.setIcon(ImageIO.read(new File("./resources/blocked_folder_icon.png")));
+				}
 			} else {
-				this.setIcon(ImageIO.read(new File("./resources/folder_icon.png")));
+				if (type == Type.FILE){
+					this.setIcon(ImageIO.read(new File("./resources/file_icon.png")));
+				} else {
+					this.setIcon(ImageIO.read(new File("./resources/folder_icon.png")));
+				}
 			}
 		} catch (IOException e) {
 			System.out.println("Failed to load the icon for the element" + name);
@@ -37,9 +45,9 @@ public class Element {
 	// equals() override
 	public boolean equals(Element element){
 		
-		boolean name = (this.getName() == element.getName());
-		boolean path = (this.getPath() == element.getPath());
-		boolean type = (this.getType() == element.getType());
+		boolean name = (this.getName()==(element.getName()));
+		boolean path = (this.getPath()==(element.getPath()));
+		boolean type = (this.getType()==(element.getType()));
 		
 		if (name && path && type){
 			return true;
@@ -55,7 +63,7 @@ public class Element {
 	}
 	
 	public String toStringFull(){
-		return (this.getName() + "-" + this.getPath() + "-" + this.getType() + "-" + this.getHref());
+		return (this.getName() + "%" + this.getPath() + "%" + this.getType() + "%" + this.getHref());
 	}
 
 	// Get & Set

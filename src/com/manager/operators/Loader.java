@@ -111,7 +111,16 @@ public class Loader {
 		
 		// Resulting Tree
 		Tree<Element> resources = new Tree<Element>();
-		Element rootElement = new Element(course.getName(), "/" + course.getName(), Type.FOLDER, course.getResourcesURL(), false);
+		
+		// Check if course is blocked
+		boolean isToBeDeleted = false;
+		Element dummy = new Element(course.getName(), "/" + course.getName(), Type.FOLDER, course.getResourcesURL(), false);
+		for (Element element : settings.getBlockedElements()) {
+			if (element.equals(dummy)) {
+				isToBeDeleted = true;
+			}
+		}
+		Element rootElement = new Element(course.getName(), "/" + course.getName(), Type.FOLDER, course.getResourcesURL(), isToBeDeleted);
 					
 		// Load from itsLearning
 		if (side == From.ITSLEARNING){
@@ -288,9 +297,17 @@ public class Loader {
 				String path = (root.getData()).getPath() + "/" + name;
 				String href = entry.getAttribute("href");
 				Type type = (href.substring(29, 30).equals("F") ? (Type.FOLDER) : (Type.FILE));
+				boolean isToBeDeleted = false;
+				Element dummy = new Element(name, path, type, href, false);
+				for (Element element : settings.getBlockedElements()) {
+					if (element.equals(dummy)) {
+						isToBeDeleted = true;
+					}
+				}
 				
 				// Define and build TreeNode
-				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href, false));
+				
+				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href, isToBeDeleted));
 				
 				// Recursively add child nodes
 				if (type == (Type.FOLDER)){
@@ -317,9 +334,16 @@ public class Loader {
 				String path = (root.getData().getPath()) + "/" + name;
 				Type type = ((files[i].isDirectory()) ? (Type.FOLDER) : (Type.FILE));
 				String href = "";
+				boolean isToBeDeleted = false;
+				Element dummy = new Element(name, path, type, href, false);
+				for (Element element : settings.getBlockedElements()) {
+					if (element.equals(dummy)) {
+						isToBeDeleted = true;
+					}
+				}
 				
 				// Define and build TreeNode
-				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href, false));
+				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href, isToBeDeleted));
 				
 				// Recursively add child nodes
 				if (type == (Type.FOLDER)){
