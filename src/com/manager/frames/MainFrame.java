@@ -149,7 +149,7 @@ public class MainFrame extends JFrame {
 				
 				LinkedList<Element> downloadElements = new LinkedList<Element>();
 				for (Course course : itsLearningCourses) {
-					downloadElements.addAll(loader.getAllFilesFromTree(course));
+					downloadElements.addAll(loader.getAllFilesFromTree(course, settingsCourses));
 				}
 
 				DownloadDialog dialog = new DownloadDialog(settings, loader, downloadElements);

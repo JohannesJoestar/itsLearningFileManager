@@ -360,8 +360,8 @@ public class Loader {
 	}
 	
 	// Gets all non-folder elements from a given tree
-	public LinkedList<Element> getAllFilesFromTree(Tree<Element> tree){
-		LinkedList<Element> result = buildFileList(tree.getRoot(), new LinkedList<Element>());
+	public LinkedList<Element> getAllFilesFromTree(Tree<Element> tree, LinkedList<Course> settingsCourses){
+		LinkedList<Element> result = buildFileList(tree.getRoot(), settingsCourses, new LinkedList<Element>());
 
 		return result;
 		
@@ -369,12 +369,19 @@ public class Loader {
 	
 	// Traverses a given tree and builds the list given as paramater
 	// This is auxilary to the getAllFilesFromTree() method
-	public LinkedList<Element> buildFileList(TreeNode<Element> root, LinkedList<Element> list){
+	public LinkedList<Element> buildFileList(TreeNode<Element> root, LinkedList<Course> settingsCourses, LinkedList<Element> list){
 		int size = root.getChildren().size();
 		
 		// Filter blocked courses
 		if (settings.getBlockedElements().contains(root.getData())) {
 			return list;
+		}
+		
+		// Filter existent items
+		for (Course course : settingsCourses) {
+			if (course.exists(root.getData())) {
+				return list;
+			}
 		}
 		
 		for (int i = 0; i < size; i++){
@@ -386,9 +393,28 @@ public class Loader {
 				continue;
 			}
 			
+			// Filter existent items
+			boolean doubleBreak = false;
+			for (Course course : settingsCourses) {
+				
+				if (course.exists(child.getData())) {
+					doubleBreak = true;
+					break;
+				}
+				
+				if (doubleBreak) {
+					break;
+				} else {
+					continue;
+				}
+			}
+			if (doubleBreak) {
+				continue;
+			}
+			
 			// Only "file" type Elements will be added since we can't "download folders"
 			if (child.getData().getType() == Type.FOLDER){
-				buildFileList(child, list);
+				buildFileList(child, settingsCourses,  list);
 			} else {
 				list.add(child.getData());
 			}
