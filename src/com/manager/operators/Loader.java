@@ -72,11 +72,14 @@ public class Loader {
 				
 				// Navigate to href and find resources page url
 				driver.navigate().to(hrefs[i]);
-				String resources = driver.findElement(By.xpath("//*[@id=\"link-resources\"]")).getAttribute("href");
+				String resourcesURL = driver.findElement(By.xpath("//*[@id=\"link-resources\"]")).getAttribute("href");
 				
+				// Load Resources
+				Course course = new Course(names[i], resourcesURL);
+				course.setRoot(loadResources(course, From.ITSLEARNING).getRoot());
 				
 				// Build course and add to the list
-				courses.add(new Course(names[i], resources));
+				courses.add(course);
 			}
 			
 			// Return the resulting Course LinkedList
@@ -93,7 +96,9 @@ public class Loader {
 			
 			// Create courses from course names found under /Resources
 			for (String courseName : courseNames){
-				courses.add(new Course(courseName, null));
+				Course course = new Course(courseName, null);
+				course.setRoot(loadResources(course, From.SETTINGS).getRoot());
+				courses.add(course);
 			}
 			
 			return courses;
@@ -102,7 +107,7 @@ public class Loader {
 	}
 
 	// Loading resources
-	public Tree<Element> loadResources(Course course, From side){
+	private Tree<Element> loadResources(Course course, From side){
 		
 		// Resulting Tree
 		Tree<Element> resources = new Tree<Element>();
