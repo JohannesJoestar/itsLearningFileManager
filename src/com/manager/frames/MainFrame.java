@@ -149,9 +149,6 @@ public class MainFrame extends JFrame {
 				btnLoad.setText("Reload");
 				settingsCourses = loader.loadCourses(From.SETTINGS);
 
-				for (Course course : settingsCourses) {
-					course.setRoot(loader.loadResources(course, From.SETTINGS).getRoot());
-				}
 				listSettingsModel.clear();
 				
 				for (int i = 0; i < settingsCourses.size(); i++) {
@@ -210,10 +207,6 @@ public class MainFrame extends JFrame {
 				dialog.setVisible(true);
 			}
 		});
-		if (listItsLearningModel.isEmpty() != true && listSettingsModel.isEmpty() != true)
-			btnImportChanges.setEnabled(true);
-		else
-			btnImportChanges.setEnabled(false);
 		btnImportChanges.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnImportChanges.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		btnImportChanges.setBounds(248, 223, 192, 31);
@@ -276,10 +269,6 @@ public class MainFrame extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				itsLearningCourses = loader.loadCourses(From.ITSLEARNING);
-
-				for (Course course : itsLearningCourses) {
-					course.setRoot(loader.loadResources(course, From.ITSLEARNING).getRoot());
-				}
 
 				listItsLearningModel.clear();
 				for (int i = 0; i < itsLearningCourses.size(); i++) {

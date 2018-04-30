@@ -115,6 +115,7 @@ public class LoginFrame extends JFrame {
 		contentPane.setLayout(null);
 		
 		JTextField txtUsername = new JTextField();
+		txtUsername.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		txtUsername.setName("txtUsername");
 		txtUsername.setFont(new Font("Tahoma", Font.PLAIN, 31));
 		txtUsername.setBounds(10, 57, 294, 58);
@@ -228,11 +229,9 @@ public class LoginFrame extends JFrame {
 				// Load course resources
 				loader = new Loader(driver, settings);	
 				courses = loader.loadCourses(From.ITSLEARNING);
-				for (Course course : courses){
-					course.setRoot(loader.loadResources(course, From.ITSLEARNING).getRoot());
-				}
 				
 
+				// Launch MainFrame
 				MainFrame mainFrame = new MainFrame(driver, settings, loader, courses);
 				mainFrame.setVisible(true);
 				mainFrame.setStatus("Files loaded, ready to use!");
