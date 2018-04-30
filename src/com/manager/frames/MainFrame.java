@@ -73,42 +73,42 @@ public class MainFrame extends JFrame {
 		this.itsLearningCourses = itsLearningCourses;
 		this.settingsCourses = new LinkedList<Course>();
 		
-		// ListModel settings
-		settingsOperator = new FileListModel();
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        if (JOptionPane.showConfirmDialog(null, 
+		            "Are you sure to close this window?", "Exit", 
+		            JOptionPane.YES_NO_OPTION,
+		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+		        	driver.quit();
+		            System.exit(0);
+		        }
+		    }
+		});
+		
+		// JList
 		itsLearningOperator = new FileListModel();
-
+		settingsOperator = new FileListModel();
+		
 		initialiseComponents();
-
-		// ElementListCellRenderer is responsible for showing icons of the added
+		
+		itsLearningOperator.setInfoPanel(pnlElementItsLearning);
+		settingsOperator.setInfoPanel(pnlElementSettings);
+		
 		ElementListCellRenderer listRenderer = new ElementListCellRenderer();
 		listItsLearning.setCellRenderer(listRenderer);
 		listSettings.setCellRenderer(listRenderer);
 		
-		// Assign info panels to operators
-		settingsOperator.setInfoPanel(pnlElementSettings);
-		itsLearningOperator.setInfoPanel(pnlElementItsLearning);
-
-		// Load courses sent from LoginFrame
-		for (Course course : itsLearningCourses) {
-			itsLearningOperator.addElement(course.getRoot());
-		}
-		
-		// MouseEvent
 		listItsLearning.addMouseListener(new MouseListener(settings, itsLearningOperator, pnlElementItsLearning));
 		listSettings.addMouseListener(new MouseListener(settings, settingsOperator, pnlElementSettings));
-
-		// Close Selenium WebDriver on exit
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		this.addWindowListener(new java.awt.event.WindowAdapter() {
-			@Override
-			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-				if (JOptionPane.showConfirmDialog(null, "Are you sure to close this window?", "Exit",
-						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-					driver.quit();
-					System.exit(0);
-				}
-			}
-		});
+		
+		// Load elements into JListModels
+		TreeNode<Element> rootItsLearning = new TreeNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", false));
+		for (Course course : itsLearningCourses){
+			rootItsLearning.addChild(course.getRoot());
+		}
+		itsLearningOperator.update(rootItsLearning);
 
 	}
 
@@ -143,6 +143,7 @@ public class MainFrame extends JFrame {
 		pnlSetting.add(lblSettings);
 
 		JButton btnImportChanges = new JButton("Import Changes From itsLearning");
+		btnImportChanges.setEnabled(false);
 		btnImportChanges.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -237,8 +238,8 @@ public class MainFrame extends JFrame {
 		btnUpSettings.setBounds(10, 42, 107, 23);
 		btnUpSettings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if (itsLearningOperator.hasUpperLevel()){
-					itsLearningOperator.goUpOneLevel();
+				if (settingsOperator.hasUpperLevel()){
+					settingsOperator.goUpOneLevel();
 				}
 			}
 		});
@@ -258,8 +259,8 @@ public class MainFrame extends JFrame {
 		JButton btnUpItsLearning = new JButton("Up One Level");
 		btnUpItsLearning.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if (settingsOperator.hasUpperLevel()){
-					settingsOperator.goUpOneLevel();
+				if (itsLearningOperator.hasUpperLevel()){
+					itsLearningOperator.goUpOneLevel();
 				}
 			}
 		});
@@ -294,6 +295,7 @@ public class MainFrame extends JFrame {
 		pnlElementItsLearning.setLayout(null);
 
 		JButton btnBlockElement = new JButton("Block Element");
+		btnBlockElement.setName("btnBlockElement");
 		btnBlockElement.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -336,7 +338,7 @@ public class MainFrame extends JFrame {
 		});
 		btnBlockElement.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnBlockElement.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnBlockElement.setEnabled(true);
+		btnBlockElement.setEnabled(false);
 		btnBlockElement.setBounds(42, 64, 113, 23);
 		pnlElementItsLearning.add(btnBlockElement);
 

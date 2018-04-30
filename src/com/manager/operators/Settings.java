@@ -140,9 +140,9 @@ public class Settings {
 			String elements = "[Elements#]:";
 			for (int i = 0; i < blockedElements.size(); i++){
 				if (i != (blockedElements.size() - 1)){
-					elements = elements + (blockedElements.get(i).toString()) + ",";
+					elements = elements + (blockedElements.get(i).toStringFull()) + ",";
 				} else {
-					elements = elements + (blockedElements.get(i).toString());
+					elements = elements + (blockedElements.get(i).toStringFull());
 				}
 			}
 			

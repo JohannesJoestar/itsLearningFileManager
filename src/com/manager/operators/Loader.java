@@ -295,7 +295,6 @@ public class Loader {
 				// Recursively add child nodes
 				if (type == (Type.FOLDER)){
 					root.addChild(traverseFolders(node, From.ITSLEARNING));
-					System.out.println(" ");
 				} else {
 					root.addChild(node);
 				}

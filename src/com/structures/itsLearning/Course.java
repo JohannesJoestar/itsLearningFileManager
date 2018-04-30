@@ -8,8 +8,6 @@ public class Course extends Tree<Element>{
 	private String name;
 	private String resourcesURL;
 	
-
-	
 	// Parametric constructor
 	public Course(String name, String resourcesURL){
 		this.setName(name);
