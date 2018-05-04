@@ -363,15 +363,7 @@ public class Loader {
 		}
 		
 	}
-	
-	// Gets all non-folder elements from a given tree
-	public LinkedList<Element> getAllFilesFromTree(Tree<Element> tree){
-		LinkedList<Element> result = buildFileList(tree.getRoot(), new LinkedList<Element>());
 
-		return result;
-		
-	}
-	
 	// Traverses a given tree and builds the list given as paramater
 	// This is auxilary to the getAllFilesFromTree() method
 	public LinkedList<Element> buildFileList(TreeNode<Element> root, LinkedList<Element> list){
