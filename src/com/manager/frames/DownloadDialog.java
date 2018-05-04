@@ -27,6 +27,8 @@ import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Element;
 import com.structures.tree.TreeNode;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class DownloadDialog extends JFrame {
 
@@ -49,19 +51,28 @@ public class DownloadDialog extends JFrame {
 	// Parametric constructor//
 	public DownloadDialog(Settings settings, Loader loader,LinkedList<Element> downloadElements) {
 		
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+				setVisible(false);
+			}
+		});
+		
 		this.loader = loader;
 		this.downloadElements = downloadElements;	
 		
 		operator = new FileListModel();
 		initialiseComponents();
 		listChanges.setCellRenderer(new ElementListCellRenderer());
+		
 		operator.setInfoPanel(pnlElementDownload);
 		
 		for (Element element : downloadElements) {
 			operator.addElement(new TreeNode<Element>(element));
 		}
 		
-		listChanges.addMouseListener(new MouseListener(settings, operator, pnlChanges));
+		listChanges.addMouseListener(new MouseListener(settings, operator, pnlElementDownload));
 		
 	}
 
