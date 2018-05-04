@@ -10,12 +10,14 @@ import java.util.TimerTask;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.manager.enums.Type;
 import com.manager.operators.FileListModel;
 import com.manager.operators.Settings;
+import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
 import com.structures.tree.TreeNode;
 
@@ -50,6 +52,7 @@ public class MouseListener extends MouseAdapter{
 		
 		TreeNode<Element> node = list.getSelectedValue();
 		Element element = node.getData();
+		
 		
 		if (settings.getBlockedElements().contains(element)) {
 			setButtonStatus("Unblock Element");

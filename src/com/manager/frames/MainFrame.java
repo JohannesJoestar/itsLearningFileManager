@@ -146,13 +146,43 @@ public class MainFrame extends JFrame {
 		btnImportChanges.setEnabled(false);
 		btnImportChanges.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				 
+				LinkedList<Element> elementsToBeDownloaded = new LinkedList<Element>();
 				
-				LinkedList<Element> downloadElements = new LinkedList<Element>();
-				for (Course course : itsLearningCourses) {
-					downloadElements.addAll(loader.getAllFilesFromTree(course, settingsCourses));
+				// Filter existent items
+				// Build Element Lists
+				LinkedList<Element> itsLearningList = new LinkedList<Element>();
+				for (Course course : itsLearningCourses){
+					itsLearningList.addAll(loader.buildFileList(course.getRoot(), new LinkedList<Element>()));
+				}
+				LinkedList<Element> settingsList = new LinkedList<Element>();
+				for (Course course : settingsCourses) {
+					settingsList.addAll(loader.buildFileList(course.getRoot(), new LinkedList<Element>()));
+				}
+				
+				// Filter existent elements
+				for (Element element : itsLearningList) {
+					if (element.getType() == com.manager.enums.Type.FOLDER) {
+						continue;
+					} else {
+						boolean result = false;
+						for (Element selement : settingsList) {
+							if (element.equalsTo(selement)) {
+								result = true;
+								break;
+							} else {
+								continue;
+							}
+						}
+						if (result) {
+							continue;
+						} else {
+							elementsToBeDownloaded.add(element);
+						}
+					}
 				}
 
-				DownloadDialog dialog = new DownloadDialog(settings, loader, downloadElements);
+				DownloadDialog dialog = new DownloadDialog(settings, loader, elementsToBeDownloaded);
 				dialog.setVisible(true);
 			}
 		});

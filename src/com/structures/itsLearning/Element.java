@@ -43,11 +43,11 @@ public class Element {
 	}
 	
 	// equals() override
-	public boolean equals(Element element){
+	public boolean equalsTo(Element element){
 		
-		boolean name = (this.getName()==(element.getName()));
-		boolean path = (this.getPath()==(element.getPath()));
-		boolean type = (this.getType()==(element.getType()));
+		boolean name = (this.getName().equals((element.getName())));
+		boolean path = (this.getPath().equals((element.getPath())));
+		boolean type = (this.getType().equals((element.getType())));
 		
 		if (name && path && type){
 			return true;
