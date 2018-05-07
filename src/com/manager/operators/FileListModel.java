@@ -9,9 +9,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.structures.itsLearning.Element;
-import com.structures.tree.TreeNode;
+import com.structures.tree.TNode;
 
-public class FileListModel extends DefaultListModel<TreeNode<Element>> {
+public class FileListModel extends DefaultListModel<TNode<Element>> {
 
 	// Properties and References
 	private static final long serialVersionUID = 1L;
@@ -24,12 +24,12 @@ public class FileListModel extends DefaultListModel<TreeNode<Element>> {
 	}
 	
 	// Renew the list with given elements
-	public void update(TreeNode<Element> parent){
+	public void update(TNode<Element> parent){
 		if (!(parent.getChildren().size() == 0)) {
 			this.clear();
 			clearPanel();
 			setInfoPanelStatus(false);
-			for (TreeNode<Element> node : parent.getChildren()){
+			for (TNode<Element> node : parent.getChildren()){
 				this.addElement(node);
 			}
 		} else {
@@ -39,7 +39,7 @@ public class FileListModel extends DefaultListModel<TreeNode<Element>> {
 	
 	// Move one level up
 	public void goUpOneLevel(){
-		TreeNode<Element> grandparent = this.getElementAt(0).getParent().getParent();
+		TNode<Element> grandparent = this.getElementAt(0).getParent().getParent();
 		clearPanel();
 		setInfoPanelStatus(false);
 		update(grandparent);
@@ -48,7 +48,7 @@ public class FileListModel extends DefaultListModel<TreeNode<Element>> {
 	// Check if it's the top level
 	public boolean hasUpperLevel(){
 		
-		TreeNode<Element> node = this.getElementAt(0);
+		TNode<Element> node = this.getElementAt(0);
 		
 		if (node.getParent().getData().getName() == "Resources"){
 			return false;

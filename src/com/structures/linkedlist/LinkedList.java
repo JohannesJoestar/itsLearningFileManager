@@ -73,6 +73,12 @@ public class LinkedList<T> implements Iterable<T> {
 		return index;
 	}
 	
+	public void transfer(LinkedList<T> list) {
+		for (T data : list) {
+			this.add(data);
+		}
+	}
+	
 	public boolean isEmpty() {
 		return (this.getFirst() == null);
 	}

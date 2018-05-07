@@ -6,27 +6,23 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import java.awt.Font;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.LinkedList;
+import com.structures.linkedlist.LinkedList;
+import com.structures.tree.TNode;
+
 import java.awt.event.ActionEvent;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
-
-import org.openqa.selenium.WebDriver;
 
 import com.manager.eventhandlers.MouseListener;
 import com.manager.operators.FileListModel;
 import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Element;
-import com.structures.tree.TreeNode;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -43,13 +39,13 @@ public class DownloadDialog extends JFrame {
 	private JPanel contentPane;
 	private JPanel pnlChanges;
 	private JPanel pnlElementDownload;
-	private JList<TreeNode<Element>> listChanges;
+	private JList<TNode<Element>> listChanges;
 	private FileListModel operator;
 	private JTextField txtElementNameDownload;
 	private JTextField txtElementTypeDownload;
 	
 	// Parametric constructor//
-	public DownloadDialog(Settings settings, Loader loader,LinkedList<Element> downloadElements) {
+	public DownloadDialog(Settings settings, Loader loader, LinkedList<Element> downloadElements) {
 		
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
@@ -69,7 +65,7 @@ public class DownloadDialog extends JFrame {
 		operator.setInfoPanel(pnlElementDownload);
 		
 		for (Element element : downloadElements) {
-			operator.addElement(new TreeNode<Element>(element));
+			operator.addElement(new TNode<Element>(element));
 		}
 		
 		listChanges.addMouseListener(new MouseListener(settings, operator, pnlElementDownload));
@@ -96,7 +92,7 @@ public class DownloadDialog extends JFrame {
 		pnlChanges.add(lblReviewChanges);
 		lblReviewChanges.setFont(new Font("Tahoma", Font.BOLD, 18));
 		
-		listChanges = new JList<TreeNode<Element>>(operator);
+		listChanges = new JList<TNode<Element>>(operator);
 		listChanges.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listChanges.setBounds(10, 35, 196, 396);
 		pnlChanges.add(listChanges);

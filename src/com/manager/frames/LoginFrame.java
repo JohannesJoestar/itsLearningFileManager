@@ -17,9 +17,7 @@ import com.manager.enums.From;
 import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
-import com.structures.tree.TreeTraversal;
-
-import java.awt.TextField;
+import com.structures.linkedlist.LinkedList;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -29,16 +27,10 @@ import javax.swing.JFileChooser;
 
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.LinkedList;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
-import javax.swing.border.MatteBorder;
 import javax.swing.border.SoftBevelBorder;
 
 public class LoginFrame extends JFrame {

@@ -3,23 +3,20 @@ package com.manager.eventhandlers;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.manager.enums.Type;
 import com.manager.operators.FileListModel;
 import com.manager.operators.Settings;
-import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
-import com.structures.tree.TreeNode;
+import com.structures.linkedlist.LinkedList;
+import com.structures.tree.TNode;
 
 public class MouseListener extends MouseAdapter{
 	
@@ -39,7 +36,7 @@ public class MouseListener extends MouseAdapter{
 	@SuppressWarnings("unchecked")
 	public void mouseClicked(MouseEvent e) {
 		
-		JList<TreeNode<Element>> list = (JList<TreeNode<Element>>) e.getSource();
+		JList<TNode<Element>> list = (JList<TNode<Element>>) e.getSource();
 		
 		// Clear information if selected index is nothing
 		if (list.getSelectedIndex() < 0){
@@ -50,7 +47,7 @@ public class MouseListener extends MouseAdapter{
 			setButtonStatus(true);
 		}
 		
-		TreeNode<Element> node = list.getSelectedValue();
+		TNode<Element> node = list.getSelectedValue();
 		Element element = node.getData();
 		
 		

@@ -14,7 +14,6 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileSystemView;
 
 import com.manager.enums.Type;
-import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
 
 public class Settings {

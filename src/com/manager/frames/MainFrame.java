@@ -13,10 +13,10 @@ import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
-import com.structures.tree.TreeNode;
+import com.structures.linkedlist.LinkedList;
+import com.structures.tree.TNode;
 
 import javax.imageio.ImageIO;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -24,9 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.ListModel;
 import javax.swing.JLabel;
 
-import java.awt.Component;
 import java.awt.Font;
-import java.util.LinkedList;
 
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.BevelBorder;
@@ -55,8 +53,8 @@ public class MainFrame extends JFrame {
 	private JPanel pnlElementSettings;
 	private JPanel pnlElementItsLearning;
 	private JLabel lblStatus;
-	private JList<TreeNode<Element>> listSettings;
-	private JList<TreeNode<Element>> listItsLearning;
+	private JList<TNode<Element>> listSettings;
+	private JList<TNode<Element>> listItsLearning;
 	private FileListModel settingsOperator;
 	private FileListModel itsLearningOperator;
 	private JTextField txtElementNameItsLearning;
@@ -104,9 +102,9 @@ public class MainFrame extends JFrame {
 		listSettings.addMouseListener(new MouseListener(settings, settingsOperator, pnlElementSettings));
 		
 		// Load elements into JListModels
-		TreeNode<Element> rootItsLearning = new TreeNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", false));
+		TNode<Element> rootItsLearning = new TNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", false));
 		for (Course course : itsLearningCourses){
-			rootItsLearning.addChild(course.getRoot());
+			rootItsLearning.addChild(course.getRoot().getData());
 		}
 		itsLearningOperator.update(rootItsLearning);
 
@@ -132,7 +130,7 @@ public class MainFrame extends JFrame {
 		contentPane.add(pnlSetting);
 		pnlSetting.setLayout(null);
 
-		listSettings = new JList<TreeNode<Element>>(settingsOperator);
+		listSettings = new JList<TNode<Element>>(settingsOperator);
 		listSettings.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listSettings.setBounds(10, 75, 226, 364);
 		pnlSetting.add(listSettings);
@@ -153,11 +151,11 @@ public class MainFrame extends JFrame {
 				// Build Element Lists
 				LinkedList<Element> itsLearningList = new LinkedList<Element>();
 				for (Course course : itsLearningCourses){
-					itsLearningList.addAll(loader.buildFileList(course.getRoot(), new LinkedList<Element>()));
+					itsLearningList.transfer(loader.buildFileList(course.getRoot(), new LinkedList<Element>()));
 				}
 				LinkedList<Element> settingsList = new LinkedList<Element>();
 				for (Course course : settingsCourses) {
-					settingsList.addAll(loader.buildFileList(course.getRoot(), new LinkedList<Element>()));
+					settingsList.transfer(loader.buildFileList(course.getRoot(), new LinkedList<Element>()));
 				}
 				
 				// Filter existent elements
@@ -200,9 +198,9 @@ public class MainFrame extends JFrame {
 				settingsCourses = loader.loadCourses(From.SETTINGS);
 				
 				// Load elements into JListModels
-				TreeNode<Element> rootSettings = new TreeNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", false));
+				TNode<Element> rootSettings = new TNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", false));
 				for (Course course : settingsCourses){
-					rootSettings.addChild(course.getRoot());
+					rootSettings.addChild(course.getRoot().getData());
 				}
 				if (!btnImportChanges.isEnabled()){
 					btnImportChanges.setEnabled(true);
@@ -281,7 +279,7 @@ public class MainFrame extends JFrame {
 		contentPane.add(pnlItsLearning);
 		pnlItsLearning.setLayout(null);
 
-		listItsLearning = new JList<TreeNode<Element>>(itsLearningOperator);
+		listItsLearning = new JList<TNode<Element>>(itsLearningOperator);
 		listItsLearning.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listItsLearning.setBounds(10, 75, 226, 364);
 		pnlItsLearning.add(listItsLearning);
@@ -329,7 +327,7 @@ public class MainFrame extends JFrame {
 		btnBlockElement.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				TreeNode<Element> node = listItsLearning.getSelectedValue();
+				TNode<Element> node = listItsLearning.getSelectedValue();
 
 				try {
 					Element element = node.getData();
@@ -463,11 +461,11 @@ public class MainFrame extends JFrame {
 	}
 
 	// ListModels
-	public ListModel<TreeNode<Element>> getListSettingsModel() {
+	public ListModel<TNode<Element>> getListSettingsModel() {
 		return settingsOperator;
 	}
 
-	public ListModel<TreeNode<Element>> getListItsLearningModel() {
+	public ListModel<TNode<Element>> getListItsLearningModel() {
 		return itsLearningOperator;
 	}
 }

@@ -1,7 +1,6 @@
 package com.manager.operators;
 
 import java.io.File;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -16,8 +15,9 @@ import com.manager.enums.From;
 import com.manager.enums.Type;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
+import com.structures.linkedlist.LinkedList;
 import com.structures.tree.Tree;
-import com.structures.tree.TreeNode;
+import com.structures.tree.TNode;
 
 // Class for loading Resources
 
@@ -131,7 +131,7 @@ public class Loader {
 		if (side == From.ITSLEARNING){
 						
 			// Define and build root node
-			TreeNode<Element> rootNode = traverseFolders(new TreeNode<Element>(rootElement), From.ITSLEARNING);
+			TNode<Element> rootNode = traverseFolders(new TNode<Element>(rootElement), From.ITSLEARNING);
 			resources.setRoot(rootNode);
 						
 			// Assign resulting tree to the course
@@ -141,7 +141,7 @@ public class Loader {
 		else {
 			
 			// Define and build root node
-			TreeNode<Element> rootNode = traverseFolders(new TreeNode<Element>(rootElement), From.SETTINGS);
+			TNode<Element> rootNode = traverseFolders(new TNode<Element>(rootElement), From.SETTINGS);
 			resources.setRoot(rootNode);
 			
 			return resources;
@@ -267,7 +267,7 @@ public class Loader {
 	}
 	
 	// Auxilary method for loadResources() method
-	private TreeNode<Element> traverseFolders(TreeNode<Element> root, From side){
+	private TNode<Element> traverseFolders(TNode<Element> root, From side){
 		
 		if (side == From.ITSLEARNING){
 			
@@ -311,14 +311,13 @@ public class Loader {
 				}
 				
 				// Define and build TreeNode
-				
-				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href, isToBeDeleted));
+				TNode<Element> node = new TNode<Element>(new Element(name, path, type, href, isToBeDeleted));
 				
 				// Recursively add child nodes
 				if (type == (Type.FOLDER)){
-					root.addChild(traverseFolders(node, From.ITSLEARNING));
+					root.addChild(traverseFolders(node, From.ITSLEARNING).getData());
 				} else {
-					root.addChild(node);
+					root.addChild(node.getData());
 				}
 			}
 			
@@ -348,13 +347,13 @@ public class Loader {
 				}
 				
 				// Define and build TreeNode
-				TreeNode<Element> node = new TreeNode<Element>(new Element(name, path, type, href, isToBeDeleted));
+				TNode<Element> node = new TNode<Element>(new Element(name, path, type, href, isToBeDeleted));
 				
 				// Recursively add child nodes
 				if (type == (Type.FOLDER)){
-					root.addChild(traverseFolders(node, From.SETTINGS));
+					root.addChild(traverseFolders(node, From.SETTINGS).getData());
 				} else {
-					root.addChild(node);
+					root.addChild(node.getData());
 				}
 				
 			}
@@ -366,17 +365,14 @@ public class Loader {
 
 	// Traverses a given tree and builds the list given as paramater
 	// This is auxilary to the getAllFilesFromTree() method
-	public LinkedList<Element> buildFileList(TreeNode<Element> root, LinkedList<Element> list){
-		int size = root.getChildren().size();
-		
+	public LinkedList<Element> buildFileList(TNode<Element> root, LinkedList<Element> list){
+
 		// Filter blocked courses
 		if (settings.getBlockedElements().contains(root.getData())) {
 			return list;
 		}
 		
-		for (int i = 0; i < size; i++){
-			
-			TreeNode<Element> child = root.getChildAt(i);
+		for (TNode<Element> child : root.getChildren()){
 			
 			// Filter blocked elements
 			if (settings.getBlockedElements().contains(child.getData())) {
