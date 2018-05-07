@@ -24,10 +24,9 @@ public class TNode<T> {
 	}
 	
 	// Methods
-	public void addChild(T data) {
-		TNode<T> node = new TNode<T>(data);
-		node.setParent(this);
-		children.add(node);
+	public void addChild(TNode<T> child) {
+		child.setParent(this);
+		children.add(child);
 	}
 	public void removeChild(T data) {
 		for (TNode<T> child : children) {

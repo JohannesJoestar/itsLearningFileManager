@@ -76,7 +76,7 @@ public class Loader {
 				
 				// Load Resources
 				Course course = new Course(names[i], resourcesURL);
-				course.setRoot(loadResources(course, From.ITSLEARNING).getRoot());
+				course.setRoot(loadResources(course, From.ITSLEARNING));
 				
 				// Build course and add to the list
 				courses.add(course);
@@ -98,7 +98,7 @@ public class Loader {
 			try {
 				for (String courseName : courseNames){
 					Course course = new Course(courseName, null);
-					course.setRoot(loadResources(course, From.SETTINGS).getRoot());
+					course.setRoot(loadResources(course, From.SETTINGS));
 					courses.add(course);
 				}
 			} catch (Exception e) {
@@ -112,11 +112,8 @@ public class Loader {
 	}
 
 	// Loading resources
-	private Tree<Element> loadResources(Course course, From side){
-		
-		// Resulting Tree
-		Tree<Element> resources = new Tree<Element>();
-		
+	private TNode<Element> loadResources(Course course, From side){
+
 		// Check if course is blocked
 		boolean isToBeDeleted = false;
 		Element dummy = new Element(course.getName(), "/" + course.getName(), Type.FOLDER, course.getResourcesURL(), false);
@@ -132,19 +129,17 @@ public class Loader {
 						
 			// Define and build root node
 			TNode<Element> rootNode = traverseFolders(new TNode<Element>(rootElement), From.ITSLEARNING);
-			resources.setRoot(rootNode);
 						
 			// Assign resulting tree to the course
-			return resources;
+			return rootNode;
 		}
 		// Load from settings
 		else {
 			
 			// Define and build root node
 			TNode<Element> rootNode = traverseFolders(new TNode<Element>(rootElement), From.SETTINGS);
-			resources.setRoot(rootNode);
 			
-			return resources;
+			return rootNode;
 		}
 	}
 	
@@ -315,9 +310,9 @@ public class Loader {
 				
 				// Recursively add child nodes
 				if (type == (Type.FOLDER)){
-					root.addChild(traverseFolders(node, From.ITSLEARNING).getData());
+					root.addChild(traverseFolders(node, From.ITSLEARNING));
 				} else {
-					root.addChild(node.getData());
+					root.addChild(node);
 				}
 			}
 			
@@ -351,9 +346,9 @@ public class Loader {
 				
 				// Recursively add child nodes
 				if (type == (Type.FOLDER)){
-					root.addChild(traverseFolders(node, From.SETTINGS).getData());
+					root.addChild(traverseFolders(node, From.SETTINGS));
 				} else {
-					root.addChild(node.getData());
+					root.addChild(node);
 				}
 				
 			}

@@ -104,7 +104,7 @@ public class MainFrame extends JFrame {
 		// Load elements into JListModels
 		TNode<Element> rootItsLearning = new TNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", false));
 		for (Course course : itsLearningCourses){
-			rootItsLearning.addChild(course.getRoot().getData());
+			rootItsLearning.addChild(course.getRoot());
 		}
 		itsLearningOperator.update(rootItsLearning);
 
@@ -200,7 +200,7 @@ public class MainFrame extends JFrame {
 				// Load elements into JListModels
 				TNode<Element> rootSettings = new TNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", false));
 				for (Course course : settingsCourses){
-					rootSettings.addChild(course.getRoot().getData());
+					rootSettings.addChild(course.getRoot());
 				}
 				if (!btnImportChanges.isEnabled()){
 					btnImportChanges.setEnabled(true);

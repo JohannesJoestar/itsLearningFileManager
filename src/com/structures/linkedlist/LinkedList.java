@@ -27,6 +27,7 @@ public class LinkedList<T> implements Iterable<T> {
 			node.setPrev(this.getLast());
 			this.setLast(node);
 		}
+		size++;
 	}
 	
 	public boolean remove(T data) {
@@ -34,17 +35,23 @@ public class LinkedList<T> implements Iterable<T> {
 		if (index == -1 || this.isEmpty()) {
 			return false;
 		} else {
-			LLNode<T> current = this.getFirst();
-			while (index >= 0) {
-				current = current.getNext();
-				index--;
+
+			if (index == 0) {
+				this.setFirst(this.getFirst().getNext());
+			} else if (index == this.size()) {
+				this.setLast(this.getLast().getPrev());
+			} else {
+				LLNode<T> current = this.getFirst();
+				for (int i = 0; i < index; i++) {
+					current = current.getNext();
+				}
+				LLNode<T> previous = current.getPrev();
+				LLNode<T> next = current.getNext();
+				previous.setNext(next);
+				next.setPrev(previous);
 			}
-			LLNode<T> previous = current.getPrev();
-			LLNode<T> next = current.getNext();
-			previous.setNext(next);
-			next.setPrev(previous);
-			current.setNext(null);
-			current.setPrev(null);
+			
+			size--;
 			return true;
 		}
 	}
@@ -52,9 +59,12 @@ public class LinkedList<T> implements Iterable<T> {
 	public T get(int index) {
 		if (index >= this.size()) {
 			return null;
+		} else if (index == 0) {
+			return this.getFirst().getData();
 		} else {
+			
 			LLNode<T> current = this.getFirst();
-			for (int i = 0; i <= index; i++) {
+			for (int i = 0; i < index; i++) {
 				current = current.getNext();
 			}
 			return current.getData();
