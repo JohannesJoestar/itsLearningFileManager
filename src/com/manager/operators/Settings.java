@@ -15,19 +15,22 @@ import javax.swing.filechooser.FileSystemView;
 
 import com.manager.enums.Type;
 import com.structures.itsLearning.Element;
+import com.structures.itsLearning.ElementIcon;
 
 public class Settings {
 	
 	// Class for user settings
 	// Properties and references
 	private LinkedList<Element> blockedElements;
+	private ElementIcon icons;
 	private String path;
 	private String installationPath;
 	
 	// Default constructor
-	public Settings(){
+	public Settings(ElementIcon icons){
 		this.setBlockedElements(null);
 		this.setInstallationPath(null);
+		this.icons = icons;
 	}
 	
 	// Load settings from given path
@@ -72,7 +75,7 @@ public class Settings {
 							String[] elements = content.split(",");
 							for (String element : elements){
 								String[] attributes = element.split("%");
-								blockedElements.add(new Element(attributes[0], attributes[1], ((attributes[2] == "folder") ? Type.FOLDER : Type.FILE), attributes[3], true)); 
+								blockedElements.add(new Element(attributes[0], attributes[1], ((attributes[2] == "folder") ? Type.FOLDER : Type.FILE), attributes[3], ((attributes[2] == "folder") ? icons.FOLDER : icons.FILE) )); 
 							}
 						} else {
 							this.setInstallationPath(content);

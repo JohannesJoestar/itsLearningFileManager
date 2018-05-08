@@ -1,5 +1,6 @@
 package com.manager.operators;
 
+import java.awt.Image;
 import java.io.File;
 import java.util.List;
 
@@ -15,8 +16,8 @@ import com.manager.enums.From;
 import com.manager.enums.Type;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
+import com.structures.itsLearning.ElementIcon;
 import com.structures.linkedlist.LinkedList;
-import com.structures.tree.Tree;
 import com.structures.tree.TNode;
 
 // Class for loading Resources
@@ -24,15 +25,17 @@ import com.structures.tree.TNode;
 public class Loader {
 	
 	// Attributes and references
+	private ElementIcon icons;
 	private String defaultDownloadFolderPath;
 	private WebDriver driver;
 	private Settings settings;
 	
 	// Parametric constructor
-	public Loader(WebDriver driver, Settings settings){
+	public Loader(WebDriver driver, Settings settings, ElementIcon icons){
 		this.setDefaultDownloadFolderPath(System.getProperty("user.home") + "/Downloads");
 		this.driver = driver;
 		this.settings = settings;
+		this.icons = icons;
 	}
 	
 	// Loading methods
@@ -114,15 +117,7 @@ public class Loader {
 	// Loading resources
 	private TNode<Element> loadResources(Course course, From side){
 
-		// Check if course is blocked
-		boolean isToBeDeleted = false;
-		Element dummy = new Element(course.getName(), "/" + course.getName(), Type.FOLDER, course.getResourcesURL(), false);
-		for (Element element : settings.getBlockedElements()) {
-			if (element.equalsTo(dummy)) {
-				isToBeDeleted = true;
-			}
-		}
-		Element rootElement = new Element(course.getName(), "/" + course.getName(), Type.FOLDER, course.getResourcesURL(), isToBeDeleted);
+		Element rootElement = new Element(course.getName(), "/" + course.getName(), Type.FOLDER, course.getResourcesURL(), icons.FOLDER);
 					
 		// Load from itsLearning
 		if (side == From.ITSLEARNING){
@@ -297,16 +292,10 @@ public class Loader {
 				String path = (root.getData()).getPath() + "/" + name;
 				String href = entry.getAttribute("href");
 				Type type = (href.substring(29, 30).equals("F") ? (Type.FOLDER) : (Type.FILE));
-				boolean isToBeDeleted = false;
-				Element dummy = new Element(name, path, type, href, false);
-				for (Element element : settings.getBlockedElements()) {
-					if (element.equalsTo(dummy)) {
-						isToBeDeleted = true;
-					}
-				}
+				Image icon = (type == Type.FOLDER ? (icons.FOLDER) : (icons.FILE));
 				
 				// Define and build TreeNode
-				TNode<Element> node = new TNode<Element>(new Element(name, path, type, href, isToBeDeleted));
+				TNode<Element> node = new TNode<Element>(new Element(name, path, type, href, icon));
 				
 				// Recursively add child nodes
 				if (type == (Type.FOLDER)){
@@ -331,18 +320,13 @@ public class Loader {
 				// Attributes
 				String name = files[i].getName();
 				String path = (root.getData().getPath()) + "/" + name;
-				Type type = ((files[i].isDirectory()) ? (Type.FOLDER) : (Type.FILE));
 				String href = "";
-				boolean isToBeDeleted = false;
-				Element dummy = new Element(name, path, type, href, false);
-				for (Element element : settings.getBlockedElements()) {
-					if (element.equalsTo(dummy)) {
-						isToBeDeleted = true;
-					}
-				}
+				Type type = ((files[i].isDirectory()) ? (Type.FOLDER) : (Type.FILE));
+				Image icon = (type == Type.FOLDER ? (icons.FOLDER) : (icons.FILE));
+				
 				
 				// Define and build TreeNode
-				TNode<Element> node = new TNode<Element>(new Element(name, path, type, href, isToBeDeleted));
+				TNode<Element> node = new TNode<Element>(new Element(name, path, type, href, icon));
 				
 				// Recursively add child nodes
 				if (type == (Type.FOLDER)){

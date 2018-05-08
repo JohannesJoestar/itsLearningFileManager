@@ -17,6 +17,7 @@ import com.manager.enums.From;
 import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
+import com.structures.itsLearning.ElementIcon;
 import com.structures.linkedlist.LinkedList;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -27,6 +28,7 @@ import javax.swing.JFileChooser;
 
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -38,6 +40,7 @@ public class LoginFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private WebDriver driver;
+	private ElementIcon icons;
 	private Settings settings;
 	private Loader loader;
 	private JButton btnNewButton;
@@ -75,8 +78,11 @@ public class LoginFrame extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * @throws IOException 
 	 */
-	public LoginFrame() {
+	public LoginFrame() throws IOException {
+		
+		this.icons = new ElementIcon();
 		
 		initialiseComponents();
 		
@@ -172,7 +178,7 @@ public class LoginFrame extends JFrame {
 				} 
 				
 				// Prompt user for the settings file
-				settings = new Settings();
+				settings = new Settings(icons);
 				
 				JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 
@@ -219,12 +225,12 @@ public class LoginFrame extends JFrame {
 	
 				// Login succesful
 				// Load course resources
-				loader = new Loader(driver, settings);	
+				loader = new Loader(driver, settings, icons);	
 				courses = loader.loadCourses(From.ITSLEARNING);
 				
 
 				// Launch MainFrame
-				MainFrame mainFrame = new MainFrame(driver, settings, loader, courses);
+				MainFrame mainFrame = new MainFrame(driver, settings, loader, icons, courses);
 				mainFrame.setVisible(true);
 				mainFrame.setStatus("Files loaded, ready to use!");
 				

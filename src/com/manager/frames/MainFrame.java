@@ -13,6 +13,7 @@ import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
+import com.structures.itsLearning.ElementIcon;
 import com.structures.linkedlist.LinkedList;
 import com.structures.tree.TNode;
 
@@ -44,6 +45,7 @@ public class MainFrame extends JFrame {
 	// References
 	private LinkedList<Course> itsLearningCourses;
 	private LinkedList<Course> settingsCourses;
+	private ElementIcon icons;
 	private WebDriver driver;
 	private Settings settings;
 	private Loader loader;
@@ -63,11 +65,12 @@ public class MainFrame extends JFrame {
 	private JTextField txtElementTypeSettings;
 
 	// Parametric constructor
-	public MainFrame(WebDriver driver, Settings settings, Loader loader, LinkedList<Course> itsLearningCourses) {
+	public MainFrame(WebDriver driver, Settings settings, Loader loader, ElementIcon icons, LinkedList<Course> itsLearningCourses) {
 
 		this.driver = driver;
 		this.settings = settings;
 		this.loader = loader;
+		this.icons = icons;
 		this.itsLearningCourses = itsLearningCourses;
 		this.settingsCourses = new LinkedList<Course>();
 		
@@ -102,7 +105,7 @@ public class MainFrame extends JFrame {
 		listSettings.addMouseListener(new MouseListener(settings, settingsOperator, pnlElementSettings));
 		
 		// Load elements into JListModels
-		TNode<Element> rootItsLearning = new TNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", false));
+		TNode<Element> rootItsLearning = new TNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", icons.FOLDER));
 		for (Course course : itsLearningCourses){
 			rootItsLearning.addChild(course.getRoot());
 		}
@@ -198,7 +201,7 @@ public class MainFrame extends JFrame {
 				settingsCourses = loader.loadCourses(From.SETTINGS);
 				
 				// Load elements into JListModels
-				TNode<Element> rootSettings = new TNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", false));
+				TNode<Element> rootSettings = new TNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", icons.FOLDER));
 				for (Course course : settingsCourses){
 					rootSettings.addChild(course.getRoot());
 				}

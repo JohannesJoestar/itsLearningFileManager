@@ -1,10 +1,6 @@
 package com.structures.itsLearning;
 
 import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import com.manager.enums.Type;
 
@@ -18,28 +14,12 @@ public class Element {
 	private String href;
 	
 	// Parametric Constructor
-	public Element(String name, String path, Type type, String href, boolean blocked){
+	public Element(String name, String path, Type type, String href, Image icon){
 		this.setName(name);
 		this.setPath(path);
 		this.setType(type);
 		this.setHref(href);
-		try {
-			if (blocked) {
-				if (type == Type.FILE){
-					this.setIcon(ImageIO.read(new File("./resources/blocked_file_icon.png")));
-				} else {
-					this.setIcon(ImageIO.read(new File("./resources/blocked_folder_icon.png")));
-				}
-			} else {
-				if (type == Type.FILE){
-					this.setIcon(ImageIO.read(new File("./resources/file_icon.png")));
-				} else {
-					this.setIcon(ImageIO.read(new File("./resources/folder_icon.png")));
-				}
-			}
-		} catch (IOException e) {
-			System.out.println("Failed to load the icon for the element" + name);
-		}
+		this.setIcon(icon);
 	}
 	
 	// equals() override
