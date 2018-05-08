@@ -29,11 +29,7 @@ public class Element {
 		boolean path = (this.getPath().equals((element.getPath())));
 		boolean type = (this.getType().equals((element.getType())));
 		
-		if (name && path && type){
-			return true;
-		} else {
-			return false;
-		}
+		return (name && path && type);
 	}
 	
 	// toString() override
