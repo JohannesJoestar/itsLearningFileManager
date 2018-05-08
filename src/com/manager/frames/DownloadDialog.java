@@ -47,7 +47,7 @@ public class DownloadDialog extends JFrame {
 	// Parametric constructor//
 	public DownloadDialog(Settings settings, Loader loader, LinkedList<Element> downloadElements) {
 		
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		//this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent arg0) {
@@ -74,7 +74,7 @@ public class DownloadDialog extends JFrame {
 
 	private void initialiseComponents() {
 		setTitle("Downloader");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 512);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
