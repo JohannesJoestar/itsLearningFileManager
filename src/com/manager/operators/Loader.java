@@ -141,8 +141,6 @@ public class Loader {
 	// Downloads a give list of Elements
 	public void download(LinkedList<Element> elements){
 		
-		LinkedList<String> hrefs = new LinkedList<String>();
-		
 		// Collect download links
 		for (int i = 0; i < elements.size(); i++){
 			
@@ -160,7 +158,7 @@ public class Loader {
 			driver.navigate().to(element.getHref());
 			driver.switchTo().frame("ctl00_ContentPlaceHolder_ExtensionIframe");
 			
-			String href;
+			String href = null;
 			
 			// Differentiate between 2 types of download buttons
 			WebElement downloadButton;
@@ -197,14 +195,6 @@ public class Loader {
 				}
 			}
 			
-			hrefs.add(href);
-		}
-		
-		// Go through the download links
-		for (int i = 0; i < elements.size(); i++){
-			
-			Element element = elements.get(i);
-			String href = hrefs.get(i);
 			driver.navigate().to(href);
 			File file = new File(this.getDefaultDownloadFolderPath() + "/" + element.getName());
 			
@@ -223,7 +213,7 @@ public class Loader {
 						Thread.sleep(300);
 					} catch (InterruptedException e) {
 						JOptionPane.showMessageDialog(null, "Download process has been interrupted.");
-						continue;
+						return;
 					}
 				}
 				
