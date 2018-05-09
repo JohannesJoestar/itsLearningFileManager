@@ -147,12 +147,8 @@ public class Loader {
 			Element element = elements.get(i);
 			
 			// Layout the folder structure first
-			try {
-				File folder = new File(settings.getInstallationPath() + (element.getPath().substring(0, (element.getPath().length() - element.getName().length()))));
-				folder.mkdirs();
-			} catch (Exception e){
-				e.printStackTrace();
-			}
+			File folder = new File(settings.getInstallationPath() + (element.getPath().substring(0, (element.getPath().length() - element.getName().length()))));
+			folder.mkdirs();
 			
 			// Navigate to frames where download buttons (should be) present
 			driver.navigate().to(element.getHref());
@@ -186,10 +182,11 @@ public class Loader {
 			}
 			
 			// Check if Element name is matching the name of the file that is actually going to be downloaded
-			// (Because that's a thing apparently)
+			// (Because that's a thing)
 			if (downloadButton != null){
 				String downloadName = downloadButton.getAttribute("download");
 				if (downloadName != element.getName()){
+					downloadName = downloadName + element.getName().substring(element.getName().length() - 4);
 					element.setPath((element.getPath().substring(0, element.getPath().length() - element.getName().length())) + downloadName);
 					element.setName(downloadName);
 				}
