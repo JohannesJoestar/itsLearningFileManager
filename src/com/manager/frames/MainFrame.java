@@ -154,11 +154,11 @@ public class MainFrame extends JFrame {
 				// Build Element Lists
 				LinkedList<Element> itsLearningList = new LinkedList<Element>();
 				for (Course course : itsLearningCourses){
-					itsLearningList.transfer(loader.buildFileList(course.getRoot(), new LinkedList<Element>()));
+					itsLearningList.transfer(course.toLinkedList(course.getRoot(), new LinkedList<Element>(), settings));
 				}
 				LinkedList<Element> settingsList = new LinkedList<Element>();
 				for (Course course : settingsCourses) {
-					settingsList.transfer(loader.buildFileList(course.getRoot(), new LinkedList<Element>()));
+					settingsList.transfer(course.toLinkedList(course.getRoot(), new LinkedList<Element>()));
 				}
 				
 				// Filter existent elements

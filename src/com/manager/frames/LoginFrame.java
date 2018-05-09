@@ -178,8 +178,9 @@ public class LoginFrame extends JFrame {
 				} 
 				
 				// Prompt user for the settings file
+				JOptionPane.showMessageDialog(null, "Please locate your settings.txt file.\nCancel the process if you don't have it.");
 				settings = new Settings(icons);
-				
+	
 				JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 
 				// Settings file validation loop

@@ -332,31 +332,6 @@ public class Loader {
 		
 	}
 
-	// Traverses a given tree and builds the list given as paramater
-	// This is auxilary to the getAllFilesFromTree() method
-	public LinkedList<Element> buildFileList(TNode<Element> root, LinkedList<Element> list){
-
-		// Filter blocked courses
-		if (settings.getBlockedElements().contains(root.getData())) {
-			return list;
-		}
-		
-		for (TNode<Element> child : root.getChildren()){
-			
-			// Filter blocked elements
-			if (settings.getBlockedElements().contains(child.getData())) {
-				continue;
-			}
-			
-			// Only "file" type Elements will be added since we can't "download folders"
-			if (child.getData().getType() == Type.FOLDER){
-				buildFileList(child,  list);
-			} else {
-				list.add(child.getData());
-			}
-		}
-		return list;
-	}
 
 
 	// Get & Set

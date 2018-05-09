@@ -130,6 +130,7 @@ public class Settings {
 	}
 	
 	public boolean promptSettingsPath(){
+		
 		JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setAcceptAllFileFilterUsed(false);
@@ -199,7 +200,7 @@ public class Settings {
 				String url = "[Resources]:" + installationPath;
 				
 				writer.write(elements + "\n" + url);
-				
+
 				writer.close();
 			} catch (IOException e) {
 				
