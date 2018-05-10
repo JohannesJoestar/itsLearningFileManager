@@ -53,7 +53,7 @@ public class Settings {
 					if (line.length() == 12){
 						
 						// Installation path cannot be empty!
-						if (line.substring(0, 12).equals("[Resources]:") || line.length() == 12){
+						if (line.substring(0, 12).equals("[Resources]:")){
 							JOptionPane.showMessageDialog(null, "Your installation path is not set up.");
 							promptInstallationPath();
 						} else {
