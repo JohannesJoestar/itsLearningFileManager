@@ -1,6 +1,5 @@
 package com.manager.operators;
 
-import java.awt.Image;
 import java.io.File;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import com.manager.enums.From;
 import com.manager.enums.Type;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
-import com.structures.itsLearning.ElementIcon;
 import com.structures.linkedlist.LinkedList;
 import com.structures.tree.TNode;
 
@@ -25,17 +23,15 @@ import com.structures.tree.TNode;
 public class Loader {
 	
 	// Attributes and references
-	private ElementIcon icons;
 	private String defaultDownloadFolderPath;
 	private WebDriver driver;
 	private Settings settings;
 	
 	// Parametric constructor
-	public Loader(WebDriver driver, Settings settings, ElementIcon icons){
+	public Loader(WebDriver driver, Settings settings){
 		this.setDefaultDownloadFolderPath(System.getProperty("user.home") + "/Downloads");
 		this.driver = driver;
 		this.settings = settings;
-		this.icons = icons;
 	}
 	
 	// Loading methods
@@ -117,7 +113,7 @@ public class Loader {
 	// Loading resources
 	private TNode<Element> loadResources(Course course, From side){
 
-		Element rootElement = new Element(course.getName(), "/" + course.getName(), Type.FOLDER, course.getResourcesURL(), icons.FOLDER);
+		Element rootElement = new Element(course.getName(), "/" + course.getName(), Type.FOLDER, course.getResourcesURL());
 					
 		// Load from itsLearning
 		if (side == From.ITSLEARNING){
@@ -278,10 +274,9 @@ public class Loader {
 				String path = (root.getData()).getPath() + "/" + name;
 				String href = entry.getAttribute("href");
 				Type type = (href.substring(29, 30).equals("F") ? (Type.FOLDER) : (Type.FILE));
-				Image icon = (type == Type.FOLDER ? (icons.FOLDER) : (icons.FILE));
 				
 				// Define and build TreeNode
-				TNode<Element> node = new TNode<Element>(new Element(name, path, type, href, icon));
+				TNode<Element> node = new TNode<Element>(new Element(name, path, type, href));
 				
 				// Recursively add child nodes
 				if (type == (Type.FOLDER)){
@@ -308,11 +303,9 @@ public class Loader {
 				String path = (root.getData().getPath()) + "/" + name;
 				String href = "";
 				Type type = ((files[i].isDirectory()) ? (Type.FOLDER) : (Type.FILE));
-				Image icon = (type == Type.FOLDER ? (icons.FOLDER) : (icons.FILE));
-				
 				
 				// Define and build TreeNode
-				TNode<Element> node = new TNode<Element>(new Element(name, path, type, href, icon));
+				TNode<Element> node = new TNode<Element>(new Element(name, path, type, href));
 				
 				// Recursively add child nodes
 				if (type == (Type.FOLDER)){

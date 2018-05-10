@@ -13,11 +13,9 @@ import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
-import com.structures.itsLearning.ElementIcon;
 import com.structures.linkedlist.LinkedList;
 import com.structures.tree.TNode;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -35,7 +33,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 
 public class MainFrame extends JFrame {
 
@@ -45,7 +42,6 @@ public class MainFrame extends JFrame {
 	// References
 	private LinkedList<Course> itsLearningCourses;
 	private LinkedList<Course> settingsCourses;
-	private ElementIcon icons;
 	private WebDriver driver;
 	private Settings settings;
 	private Loader loader;
@@ -65,12 +61,11 @@ public class MainFrame extends JFrame {
 	private JTextField txtElementTypeSettings;
 
 	// Parametric constructor
-	public MainFrame(WebDriver driver, Settings settings, Loader loader, ElementIcon icons, LinkedList<Course> itsLearningCourses) {
+	public MainFrame(WebDriver driver, Settings settings, Loader loader, LinkedList<Course> itsLearningCourses) {
 
 		this.driver = driver;
 		this.settings = settings;
 		this.loader = loader;
-		this.icons = icons;
 		this.itsLearningCourses = itsLearningCourses;
 		this.settingsCourses = new LinkedList<Course>();
 		
@@ -97,7 +92,7 @@ public class MainFrame extends JFrame {
 		itsLearningOperator.setInfoPanel(pnlElementItsLearning);
 		settingsOperator.setInfoPanel(pnlElementSettings);
 		
-		ElementListCellRenderer listRenderer = new ElementListCellRenderer();
+		ElementListCellRenderer listRenderer = new ElementListCellRenderer(settings);
 		listItsLearning.setCellRenderer(listRenderer);
 		listSettings.setCellRenderer(listRenderer);
 		
@@ -105,7 +100,7 @@ public class MainFrame extends JFrame {
 		listSettings.addMouseListener(new MouseListener(settings, settingsOperator, pnlElementSettings));
 		
 		// Load elements into JListModels
-		TNode<Element> rootItsLearning = new TNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", icons.FOLDER));
+		TNode<Element> rootItsLearning = new TNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "..."));
 		for (Course course : itsLearningCourses){
 			rootItsLearning.addChild(course.getRoot());
 		}
@@ -168,7 +163,7 @@ public class MainFrame extends JFrame {
 					} else {
 						boolean result = false;
 						for (Element selement : settingsList) {
-							if (element.equalsTo(selement)) {
+							if (element.equals(selement)) {
 								result = true;
 								break;
 							} else {
@@ -201,7 +196,7 @@ public class MainFrame extends JFrame {
 				settingsCourses = loader.loadCourses(From.SETTINGS);
 				
 				// Load elements into JListModels
-				TNode<Element> rootSettings = new TNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "...", icons.FOLDER));
+				TNode<Element> rootSettings = new TNode<Element>(new Element("Resources", "/", com.manager.enums.Type.FOLDER, "..."));
 				for (Course course : settingsCourses){
 					rootSettings.addChild(course.getRoot());
 				}
@@ -336,24 +331,10 @@ public class MainFrame extends JFrame {
 					Element element = node.getData();
 					if (btnBlockElement.getText().equals("Block Element")) {
 						
-						// Adjust element icon
-						if (element.getType() == com.manager.enums.Type.FILE){
-							element.setIcon(ImageIO.read(new File("./resources/blocked_file_icon.png")));
-						} else {
-							element.setIcon(ImageIO.read(new File("./resources/blocked_folder_icon.png")));
-						}
-						
 						// Block the element
 						settings.getBlockedElements().add(node.getData());
 						
 					} else {
-						
-						// Adjust element icon
-						if (element.getType() == com.manager.enums.Type.FILE){
-							element.setIcon(ImageIO.read(new File("./resources/file_icon.png")));
-						} else {
-							element.setIcon(ImageIO.read(new File("./resources/folder_icon.png")));
-						}
 						
 						// Unblock the element
 						settings.getBlockedElements().remove(settings.getBlockedElements().indexOf(element));

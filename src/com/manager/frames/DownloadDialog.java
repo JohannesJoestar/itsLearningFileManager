@@ -60,7 +60,7 @@ public class DownloadDialog extends JFrame {
 		
 		operator = new FileListModel();
 		initialiseComponents();
-		listChanges.setCellRenderer(new ElementListCellRenderer());
+		listChanges.setCellRenderer(new ElementListCellRenderer(settings));
 		
 		operator.setInfoPanel(pnlElementDownload);
 		

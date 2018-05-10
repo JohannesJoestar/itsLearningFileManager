@@ -1,35 +1,37 @@
 package com.structures.itsLearning;
 
-import java.awt.Image;
-
 import com.manager.enums.Type;
 
 public class Element {
 	
 	// Attributes
-	private Image icon;
 	private Type type;
 	private String name;
 	private String path;
 	private String href;
 	
 	// Parametric Constructor
-	public Element(String name, String path, Type type, String href, Image icon){
+	public Element(String name, String path, Type type, String href){
 		this.setName(name);
 		this.setPath(path);
 		this.setType(type);
 		this.setHref(href);
-		this.setIcon(icon);
 	}
 	
 	// equals() override
-	public boolean equalsTo(Element element){
+	@Override
+	public boolean equals(Object object){
 		
-		boolean name = (this.getName().equals((element.getName())));
-		boolean path = (this.getPath().equals((element.getPath())));
-		boolean type = (this.getType().equals((element.getType())));
-		
-		return (name && path && type);
+		if (!(object instanceof Element)) {
+			return false;
+		} else {
+			Element element = (Element) object;
+			boolean name = (this.getName().equals((element.getName())));
+			boolean path = (this.getPath().equals((element.getPath())));
+			boolean type = (this.getType().equals((element.getType())));
+			
+			return (name && path && type);
+		}
 	}
 	
 	// toString() override
@@ -70,12 +72,5 @@ public class Element {
 	}
 	public void setHref(String href) {
 		this.href = href;
-	}
-	// Icon
-	public Image getIcon() {
-		return icon;
-	}
-	public void setIcon(Image icon) {
-		this.icon = icon;
 	}
 }

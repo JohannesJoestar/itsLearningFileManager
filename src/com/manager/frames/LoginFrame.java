@@ -17,7 +17,6 @@ import com.manager.enums.From;
 import com.manager.operators.Loader;
 import com.manager.operators.Settings;
 import com.structures.itsLearning.Course;
-import com.structures.itsLearning.ElementIcon;
 import com.structures.linkedlist.LinkedList;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -40,7 +39,6 @@ public class LoginFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private WebDriver driver;
-	private ElementIcon icons;
 	private Settings settings;
 	private Loader loader;
 	private JButton btnNewButton;
@@ -81,8 +79,6 @@ public class LoginFrame extends JFrame {
 	 * @throws IOException 
 	 */
 	public LoginFrame() throws IOException {
-		
-		this.icons = new ElementIcon();
 		
 		initialiseComponents();
 		
@@ -179,7 +175,7 @@ public class LoginFrame extends JFrame {
 				
 				// Prompt user for the settings file
 				JOptionPane.showMessageDialog(null, "Please locate your settings.txt file.\nCancel the process if you don't have it.");
-				settings = new Settings(icons);
+				settings = new Settings();
 	
 				JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 
@@ -226,12 +222,12 @@ public class LoginFrame extends JFrame {
 	
 				// Login succesful
 				// Load course resources
-				loader = new Loader(driver, settings, icons);	
+				loader = new Loader(driver, settings);	
 				courses = loader.loadCourses(From.ITSLEARNING);
 				
 
 				// Launch MainFrame
-				MainFrame mainFrame = new MainFrame(driver, settings, loader, icons, courses);
+				MainFrame mainFrame = new MainFrame(driver, settings, loader, courses);
 				mainFrame.setVisible(true);
 				mainFrame.setStatus("Files loaded, ready to use!");
 				
