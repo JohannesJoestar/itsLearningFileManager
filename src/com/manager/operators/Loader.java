@@ -186,7 +186,6 @@ public class Loader {
 			if (downloadButton != null){
 				String downloadName = downloadButton.getAttribute("download");
 				if (downloadName != element.getName()){
-					downloadName = downloadName + element.getName().substring(element.getName().length() - 4);
 					element.setPath((element.getPath().substring(0, element.getPath().length() - element.getName().length())) + downloadName);
 					element.setName(downloadName);
 				}
