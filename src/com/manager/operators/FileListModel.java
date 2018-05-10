@@ -48,14 +48,18 @@ public class FileListModel extends DefaultListModel<TNode<Element>> {
 	// Check if it's the top level
 	public boolean hasUpperLevel(){
 		
-		TNode<Element> node = this.getElementAt(0);
-		
-		if (node.getParent().getData().getName() == "Resources"){
+		if (this.size() < 1) {
 			return false;
 		} else {
-			return true;
+			
+			TNode<Element> node = this.getElementAt(0);
+			
+			if (node.getParent().getData().getName() == "Resources"){
+				return false;
+			} else {
+				return true;
+			}
 		}
-		
 	}
 	
 	// Clear information on the panel
