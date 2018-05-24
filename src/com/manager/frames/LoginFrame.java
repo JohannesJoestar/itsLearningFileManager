@@ -36,7 +36,10 @@ import javax.swing.border.SoftBevelBorder;
 
 public class LoginFrame extends JFrame {
 
+	// Attirbutes and references
 	private static final long serialVersionUID = 1L;
+	
+	// References
 	private JPanel contentPane;
 	private WebDriver driver;
 	private Settings settings;
@@ -44,6 +47,7 @@ public class LoginFrame extends JFrame {
 	private JButton btnNewButton;
 	private JPasswordField txtPassword;
 	private LinkedList<Course> courses;
+	private LogsFrame logs;
 
 	/**
 	 * Launch the application.
@@ -81,6 +85,8 @@ public class LoginFrame extends JFrame {
 	public LoginFrame() throws IOException {
 		
 		initialiseComponents();
+		logs = new LogsFrame();
+		logs.setVisible(true);
 		
 		// Locate ChromeDriver and build WebDriver
 		System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") +  "/lib/chromedriver.exe");
@@ -134,14 +140,14 @@ public class LoginFrame extends JFrame {
 				// Validate input fields
 				// Validate username
 				if (isNullOrWhiteSpace(txtUsername.getText())){
-					JOptionPane.showMessageDialog(null, "Please enter a valid username");
+					logs.log("Please enter a valid username!");
 					txtUsername.setText("");
 					return;
 				}
 				
 				// Validate password
 				if (isNullOrWhiteSpace(String.valueOf(txtPassword.getPassword()))){
-					JOptionPane.showMessageDialog(null, "Please enter a valid password");
+					logs.log("Please enter a valid password!");
 					txtPassword.setText("");
 					return;
 				}
@@ -163,10 +169,11 @@ public class LoginFrame extends JFrame {
 					// Check for an element that is only available after succesful login to determine login status.
 					driver.findElement(By.xpath("//*[@id=\"l-header\"]/nav[3]/ul/li[2]/a/img"));
 					setVisible(false);
+					logs.log("Login successful, proceeding to main frame.");
 					
 				} catch (NoSuchElementException e){
 					
-					JOptionPane.showMessageDialog(null, "Incorrect username/password, try again.");
+					logs.log("Incorrect username/password, try again.");
 					txtUsername.setText("");
 					txtPassword.setText("");
 					return;
@@ -188,7 +195,7 @@ public class LoginFrame extends JFrame {
 						File selectedFile = chooser.getSelectedFile();
 						boolean success = settings.loadSettingsFromPath(selectedFile.getAbsolutePath());
 						if (success){
-							JOptionPane.showMessageDialog(null, "Settings loaded!");
+							logs.log("Settings loaded!");
 							break;
 						} else {
 							int answer = JOptionPane.showConfirmDialog(
@@ -200,7 +207,7 @@ public class LoginFrame extends JFrame {
 								continue;
 							} else {
 								settings.loadDefault();
-								JOptionPane.showMessageDialog(null, "Loaded default settings.");
+								logs.log("Loaded default settings.");
 								break;
 							}
 						}
@@ -222,7 +229,7 @@ public class LoginFrame extends JFrame {
 	
 				// Login succesful
 				// Load course resources
-				loader = new Loader(driver, settings);	
+				loader = new Loader(driver, settings, logs);	
 				courses = loader.loadCourses(From.ITSLEARNING);
 				
 
@@ -230,6 +237,7 @@ public class LoginFrame extends JFrame {
 				MainFrame mainFrame = new MainFrame(driver, settings, loader, courses);
 				mainFrame.setVisible(true);
 				mainFrame.setStatus("Files loaded, ready to use!");
+				logs.log("Files loaded, ready to use!");
 				
 				
 				

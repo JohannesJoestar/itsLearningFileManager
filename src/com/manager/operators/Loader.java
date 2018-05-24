@@ -7,12 +7,14 @@ import javax.swing.JOptionPane;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.manager.enums.From;
 import com.manager.enums.Type;
+import com.manager.frames.LogsFrame;
 import com.structures.itsLearning.Course;
 import com.structures.itsLearning.Element;
 import com.structures.linkedlist.LinkedList;
@@ -24,14 +26,16 @@ public class Loader {
 	
 	// Attributes and references
 	private String defaultDownloadFolderPath;
+	private LogsFrame logs;
 	private WebDriver driver;
 	private Settings settings;
 	
 	// Parametric constructor
-	public Loader(WebDriver driver, Settings settings){
+	public Loader(WebDriver driver, Settings settings, LogsFrame logs){
 		this.setDefaultDownloadFolderPath(System.getProperty("user.home") + "/Downloads");
 		this.driver = driver;
 		this.settings = settings;
+		this.logs = logs;
 	}
 	
 	// Loading methods
@@ -63,6 +67,7 @@ public class Loader {
 				// Store variables
 				hrefs[i] = a.getAttribute("href");
 				names[i] = (a.getAttribute("innerHTML")).substring(6, 13);
+				logs.log("Found course: " + names[i]);
 				
 			}
 			
@@ -79,6 +84,7 @@ public class Loader {
 				
 				// Build course and add to the list
 				courses.add(course);
+				logs.log("Succesfully loaded resources for " + course.getName() + ".");
 			}
 			
 			// Return the resulting Course LinkedList
@@ -96,9 +102,15 @@ public class Loader {
 			// Create courses from course names found under /Resources
 			try {
 				for (String courseName : courseNames){
+					
 					Course course = new Course(courseName, null);
+					logs.log("Found course: " + course.getName());
+					
 					course.setRoot(loadResources(course, From.SETTINGS));
+					logs.log("Succesfully loaded resources for " + course.getName() + ".");
+					
 					courses.add(course);
+					
 				}
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(null, "Your download path does not exist anymore.");
@@ -148,7 +160,15 @@ public class Loader {
 			
 			// Navigate to frames where download buttons (should be) present
 			driver.navigate().to(element.getHref());
-			driver.switchTo().frame("ctl00_ContentPlaceHolder_ExtensionIframe");
+			try {
+				
+				driver.switchTo().frame("ctl00_ContentPlaceHolder_ExtensionIframe");
+			} catch (NoSuchFrameException NSFE) {
+				logs.log("Element \"" + element.getName() + "\" is not directly downloadable.");
+				elements.remove(element);
+				i--;
+				continue;
+			}
 			
 			String href = null;
 			
@@ -159,19 +179,21 @@ public class Loader {
 				href = downloadButton.getAttribute("href");
 			} catch (NoSuchElementException e){
 				try {
+					
 					downloadButton = driver.findElement(By.xpath("//*[@id=\"ctl00_ctl00_MainFormContent_ResourceContent_DownloadButton_DownloadLink\"]"));
 					href = downloadButton.getAttribute("href");
+					
 				} catch (NoSuchElementException nsee){
 					
-					// Element does not have a download option
-					// Element is not suitable for download
+					logs.log("Element \"" + element.getName() + "\" is not directly downloadable.");
 					elements.remove(element);
 					i--;
 					continue;
 				}
+				
 			} catch (Exception e){
 				
-				// Element is not suitable for download
+				logs.log("Element \"" + element.getName() + "\" is not directly downloadable.");
 				elements.remove(element);
 				i--;
 				continue;
@@ -183,7 +205,9 @@ public class Loader {
 				String downloadName = downloadButton.getAttribute("download");
 				if (downloadName != element.getName()){
 					element.setPath((element.getPath().substring(0, element.getPath().length() - element.getName().length())) + downloadName);
+					logs.log("Element \"" + element.getName() + "\" has been renamed to " + downloadName + ".");
 					element.setName(downloadName);
+					
 				}
 			}
 			
@@ -204,7 +228,7 @@ public class Loader {
 				    try {
 						Thread.sleep(300);
 					} catch (InterruptedException e) {
-						JOptionPane.showMessageDialog(null, "Download process has been interrupted.");
+						logs.log("Download process has been interrupted.");
 						return;
 					}
 				}
@@ -273,7 +297,7 @@ public class Loader {
 				String name = entry.getAttribute("title");
 				String path = (root.getData()).getPath() + "/" + name;
 				String href = entry.getAttribute("href");
-				Type type = (href.substring(29, 30).equals("F") ? (Type.FOLDER) : (Type.FILE));
+				Type type = (href.substring(29, 35).equals("Folder") ? (Type.FOLDER) : (Type.FILE));
 				
 				// Define and build TreeNode
 				TNode<Element> node = new TNode<Element>(new Element(name, path, type, href));
