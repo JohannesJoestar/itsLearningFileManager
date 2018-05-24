@@ -1,17 +1,25 @@
 package com.manager.operators;
 
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.manager.enums.DownloadProcedureType;
 import com.manager.enums.From;
 import com.manager.enums.Type;
 import com.manager.frames.LogsFrame;
@@ -158,32 +166,59 @@ public class Loader {
 			File folder = new File(settings.getInstallationPath() + (element.getPath().substring(0, (element.getPath().length() - element.getName().length()))));
 			folder.mkdirs();
 			
+			DownloadProcedureType procedure = null;
+			
 			// Navigate to frames where download buttons (should be) present
 			driver.navigate().to(element.getHref());
 			try {
 				
+				// Try for general files
 				driver.switchTo().frame("ctl00_ContentPlaceHolder_ExtensionIframe");
+				procedure = DownloadProcedureType.FILE;
+				
 			} catch (NoSuchFrameException NSFE) {
+				
+				// Try for video file
+				try {
+					
+					driver.switchTo().frame("main_weblink");
+					driver.findElement(By.cssSelector("source[type='video/mp4']"));
+					procedure = DownloadProcedureType.VIDEO;
+					
+				} catch (Exception E) {
+
+				}
+				
+			}
+			
+			if (procedure == null) {
 				logs.log("Element \"" + element.getName() + "\" is not directly downloadable.");
 				elements.remove(element);
 				i--;
 				continue;
-			}
-			
-			String href = null;
-			
-			// Differentiate between 2 types of download buttons
-			WebElement downloadButton;
-			try {
-				downloadButton = driver.findElement(By.xpath("//*[@id=\"ctl00_ctl00_MainFormContent_DownloadLinkForViewType\"]"));
-				href = downloadButton.getAttribute("href");
-			} catch (NoSuchElementException e){
+			} else if (procedure == DownloadProcedureType.FILE) {
+				String href = null;
+				
+				// Differentiate between 2 types of download buttons
+				WebElement downloadButton;
 				try {
-					
-					downloadButton = driver.findElement(By.xpath("//*[@id=\"ctl00_ctl00_MainFormContent_ResourceContent_DownloadButton_DownloadLink\"]"));
+					downloadButton = driver.findElement(By.xpath("//*[@id=\"ctl00_ctl00_MainFormContent_DownloadLinkForViewType\"]"));
 					href = downloadButton.getAttribute("href");
+				} catch (NoSuchElementException e){
+					try {
+						
+						downloadButton = driver.findElement(By.xpath("//*[@id=\"ctl00_ctl00_MainFormContent_ResourceContent_DownloadButton_DownloadLink\"]"));
+						href = downloadButton.getAttribute("href");
+						
+					} catch (NoSuchElementException nsee){
+						
+						logs.log("Element \"" + element.getName() + "\" is not directly downloadable.");
+						elements.remove(element);
+						i--;
+						continue;
+					}
 					
-				} catch (NoSuchElementException nsee){
+				} catch (Exception e){
 					
 					logs.log("Element \"" + element.getName() + "\" is not directly downloadable.");
 					elements.remove(element);
@@ -191,54 +226,104 @@ public class Loader {
 					continue;
 				}
 				
-			} catch (Exception e){
-				
-				logs.log("Element \"" + element.getName() + "\" is not directly downloadable.");
-				elements.remove(element);
-				i--;
-				continue;
-			}
-			
-			// Check if Element name is matching the name of the file that is actually going to be downloaded
-			// (Because that's a thing)
-			if (downloadButton != null){
-				String downloadName = downloadButton.getAttribute("download");
-				if (downloadName != element.getName()){
-					element.setPath((element.getPath().substring(0, element.getPath().length() - element.getName().length())) + downloadName);
-					logs.log("Element \"" + element.getName() + "\" has been renamed to " + downloadName + ".");
-					element.setName(downloadName);
-					
-				}
-			}
-			
-			driver.navigate().to(href);
-			File file = new File(this.getDefaultDownloadFolderPath() + "/" + element.getName());
-			
-			// Check if target file already exists.
-			if (new File(settings.getInstallationPath() + element.getPath()).exists()){
-				continue;
-			}
-			
-			// Move file loop
-			while (true) {
-				
-				// Check if download has finished
-				while (!file.exists()) {
-					
-				    try {
-						Thread.sleep(300);
-					} catch (InterruptedException e) {
-						logs.log("Download process has been interrupted.");
-						return;
+				// Check if Element name is matching the name of the file that is actually going to be downloaded
+				// (Because that's a thing)
+				if (downloadButton != null){
+					String downloadName = downloadButton.getAttribute("download");
+					if (downloadName != element.getName()){
+						element.setPath((element.getPath().substring(0, element.getPath().length() - element.getName().length())) + downloadName);
+						logs.log("Element \"" + element.getName() + "\" has been renamed to " + downloadName + ".");
+						element.setName(downloadName);
+						
 					}
 				}
 				
-				// Move the file from the default download location to where element path points to
-				if (!moveFile(file.getAbsolutePath(), settings.getInstallationPath() + element.getPath())){
+				driver.navigate().to(href);
+				File file = new File(this.getDefaultDownloadFolderPath() + "/" + element.getName());
+				
+				// Check if target file already exists.
+				if (new File(settings.getInstallationPath() + element.getPath()).exists()){
 					continue;
-				} else {
-					break;
 				}
+				
+				// Move file loop
+				while (true) {
+					
+					// Check if download has finished
+					while (!file.exists()) {
+						
+					    try {
+							Thread.sleep(300);
+						} catch (InterruptedException e) {
+							logs.log("Download process has been interrupted.");
+							return;
+						}
+					}
+					
+					// Move the file from the default download location to where element path points to
+					if (!moveFile(file.getAbsolutePath(), settings.getInstallationPath() + element.getPath())){
+						continue;
+					} else {
+						break;
+					}
+				}
+			} else {
+				
+				// Video download procedure
+				/*
+				WebElement source = driver.findElement(By.cssSelector("source[type='video/mp4']"));
+				String href = source.getAttribute("src");
+				
+				driver.navigate().to(href);
+				
+				try {
+					
+					String save = Keys.chord(Keys.CONTROL, "s");
+					driver.findElement(By.cssSelector("video[name='media']")).sendKeys(save);
+					
+					Robot controller = new Robot();
+					
+					// Get to the adress bar
+					for (int c = 0; c < 5; c++) {
+						controller.keyPress(KeyEvent.VK_TAB);
+						controller.keyRelease(KeyEvent.VK_TAB);
+					}
+					
+					controller.keyPress(KeyEvent.VK_ENTER);
+					controller.keyRelease(KeyEvent.VK_ENTER);
+					
+					// Copy to Clipboard
+					String text = (settings.getInstallationPath() + element.getPath()).substring(0, (settings.getInstallationPath() + element.getPath()).length() - element.getName().length());
+					StringSelection stringSelection = new StringSelection(text);
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					clipboard.setContents(stringSelection, stringSelection);
+
+					// CTRL + V
+					controller.keyPress(KeyEvent.VK_CONTROL);
+					controller.keyPress(KeyEvent.VK_V);
+					controller.keyRelease(KeyEvent.VK_V);
+					controller.keyRelease(KeyEvent.VK_CONTROL);
+					
+					controller.keyPress(KeyEvent.VK_ENTER);
+					controller.keyRelease(KeyEvent.VK_ENTER);
+					
+					// Get to "Save" button
+					for (int c = 0; c < 9; c++) {
+						controller.keyPress(KeyEvent.VK_TAB);
+						controller.keyRelease(KeyEvent.VK_TAB);
+					}
+					
+					controller.keyPress(KeyEvent.VK_ENTER);
+					controller.keyRelease(KeyEvent.VK_ENTER);
+					
+				} catch (AWTException e) {
+					logs.log("Download process has been interrupted.");
+					logs.log("Element \"" + element.getName() + "\" is not directly downloadable.");
+					elements.remove(element);
+					i--;
+					continue;
+				}
+				*/
 			}
 		}
 		
